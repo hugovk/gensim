@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 # Based on Copyright (C) 2016 Radim Rehurek <radimrehurek@seznam.cz>
@@ -58,7 +57,6 @@ import numpy as np
 from scipy.special import digamma, gammaln
 from scipy import optimize
 import logging
-from six.moves import range, zip
 
 logger = logging.getLogger(__name__)
 

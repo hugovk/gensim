@@ -43,7 +43,6 @@ Examples
     >>> print(model["hello"])  # prints vector for given words
 """
 
-from __future__ import division
 
 import logging
 import os
@@ -181,7 +180,7 @@ class Wordrank(KeyedVectors):
         with utils.open(cooccurrence_shuf_file, 'rb') as f:
             numlines = sum(1 for _ in f)
         with utils.open(meta_file, 'wb') as f:
-            meta_info = "{0} {1}\n{2} {3}\n{4} {5}".format(
+            meta_info = "{} {}\n{} {}\n{} {}".format(
                 numwords, numwords, numlines, cooccurrence_shuf_file.split('/')[-1],
                 numwords, vocab_file.split('/')[-1]
             )

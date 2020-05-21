@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Chinmaya Pancholi <chinmayapancholi13@gmail.com>
 # Copyright (C) 2017 Radim Rehurek <radimrehurek@seznam.cz>
@@ -173,7 +172,7 @@ class W2VTransformer(TransformerMixin, BaseEstimator):
             )
 
         # The input as array of array
-        if isinstance(words, six.string_types):
+        if isinstance(words, str):
             words = [words]
         vectors = [self.gensim_model.wv[word] for word in words]
         return np.reshape(np.array(vectors), (len(words), self.size))

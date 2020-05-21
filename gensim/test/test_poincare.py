@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Jayant Jain <jayantjain1992@gmail.com>
 # Copyright (C) 2017 Radim Rehurek <me@radimrehurek.com>
@@ -14,7 +13,7 @@ import os
 import tempfile
 import unittest
 try:
-    from mock import Mock
+    from unittest.mock import Mock
 except ImportError:
     from unittest.mock import Mock
 
@@ -43,12 +42,12 @@ class TestPoincareData(unittest.TestCase):
         non_utf8_file = datapath('poincare_cp852.tsv')
         relations = [relation for relation in PoincareRelations(non_utf8_file, encoding='cp852')]
         self.assertEqual(len(relations), 2)
-        self.assertEqual(relations[0], (u'tímto', u'budeš'))
+        self.assertEqual(relations[0], ('tímto', 'budeš'))
 
         utf8_file = datapath('poincare_utf8.tsv')
         relations = [relation for relation in PoincareRelations(utf8_file)]
         self.assertEqual(len(relations), 2)
-        self.assertEqual(relations[0], (u'tímto', u'budeš'))
+        self.assertEqual(relations[0], ('tímto', 'budeš'))
 
 
 class TestPoincareModel(unittest.TestCase):
@@ -279,7 +278,7 @@ class TestPoincareKeyedVectors(unittest.TestCase):
     def test_most_similar_restrict_vocab(self):
         """Test most_similar returns handles restrict_vocab correctly."""
         expected = set(self.vectors.index2word[:5])
-        predicted = set(result[0] for result in self.vectors.most_similar('dog.n.01', topn=5, restrict_vocab=5))
+        predicted = {result[0] for result in self.vectors.most_similar('dog.n.01', topn=5, restrict_vocab=5)}
         self.assertEqual(expected, predicted)
 
     def test_most_similar_to_given(self):
@@ -386,7 +385,7 @@ class TestPoincareKeyedVectors(unittest.TestCase):
     def test_words_closer_than(self):
         """Test words_closer_than returns expected value for distinct and identical nodes."""
         self.assertEqual(self.vectors.words_closer_than('dog.n.01', 'dog.n.01'), [])
-        expected = set(['canine.n.02', 'hunting_dog.n.01'])
+        expected = {'canine.n.02', 'hunting_dog.n.01'}
         self.assertEqual(set(self.vectors.words_closer_than('dog.n.01', 'carnivore.n.01')), expected)
 
     def test_rank(self):

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2012 Homer Strong, Radim Rehurek
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -27,7 +26,6 @@ Disadvantages:
 
 """
 
-from __future__ import with_statement
 
 import logging
 import itertools
@@ -252,11 +250,11 @@ class HashDictionary(utils.SaveLoad, dict):
             if self.debug:
                 # increment document count for each unique tokenid that appeared in the document
                 # done here, because several words may map to the same tokenid
-                for tokenid in iterkeys(result):
+                for tokenid in result.keys():
                     self.dfs[tokenid] = self.dfs.get(tokenid, 0) + 1
 
         # return tokenids, in ascending id order
-        result = sorted(iteritems(result))
+        result = sorted(result.items())
         if return_missing:
             return result, missing
         else:
@@ -293,16 +291,16 @@ class HashDictionary(utils.SaveLoad, dict):
 
         """
         no_above_abs = int(no_above * self.num_docs)  # convert fractional threshold to absolute threshold
-        ok = [item for item in iteritems(self.dfs_debug) if no_below <= item[1] <= no_above_abs]
+        ok = [item for item in self.dfs_debug.items() if no_below <= item[1] <= no_above_abs]
         ok = frozenset(word for word, freq in sorted(ok, key=lambda x: -x[1])[:keep_n])
 
-        self.dfs_debug = {word: freq for word, freq in iteritems(self.dfs_debug) if word in ok}
-        self.token2id = {token: tokenid for token, tokenid in iteritems(self.token2id) if token in self.dfs_debug}
+        self.dfs_debug = {word: freq for word, freq in self.dfs_debug.items() if word in ok}
+        self.token2id = {token: tokenid for token, tokenid in self.token2id.items() if token in self.dfs_debug}
         self.id2token = {
             tokenid: {token for token in tokens if token in self.dfs_debug}
-            for tokenid, tokens in iteritems(self.id2token)
+            for tokenid, tokens in self.id2token.items()
         }
-        self.dfs = {tokenid: freq for tokenid, freq in iteritems(self.dfs) if self.id2token.get(tokenid, False)}
+        self.dfs = {tokenid: freq for tokenid, freq in self.dfs.items() if self.id2token.get(tokenid, False)}
 
         # for word->document frequency
         logger.info(
@@ -340,7 +338,7 @@ class HashDictionary(utils.SaveLoad, dict):
             >>> data.save_as_text(get_tmpfile("dictionary_in_text_format"))
 
         """
-        logger.info("saving %s mapping to %s" % (self, fname))
+        logger.info("saving {} mapping to {}".format(self, fname))
         with utils.open(fname, 'wb') as fout:
             for tokenid in self.keys():
                 words = sorted(self[tokenid])

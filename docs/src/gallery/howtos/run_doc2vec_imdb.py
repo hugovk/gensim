@@ -300,13 +300,13 @@ for model in simple_models:
     print("\nEvaluating %s" % model)
     err_rate, err_count, test_count, predictor = error_rate_for_model(model, train_docs, test_docs)
     error_rates[str(model)] = err_rate
-    print("\n%f %s\n" % (err_rate, model))
+    print("\n{:f} {}\n".format(err_rate, model))
 
 for model in [models_by_name['dbow+dmm'], models_by_name['dbow+dmc']]:
     print("\nEvaluating %s" % model)
     err_rate, err_count, test_count, predictor = error_rate_for_model(model, train_docs, test_docs)
     error_rates[str(model)] = err_rate
-    print("\n%f %s\n" % (err_rate, model))
+    print("\n{:f} {}\n".format(err_rate, model))
 
 ###############################################################################
 # Achieved Sentiment-Prediction Accuracy
@@ -314,7 +314,7 @@ for model in [models_by_name['dbow+dmm'], models_by_name['dbow+dmc']]:
 # Compare error rates achieved, best-to-worst
 print("Err_rate Model")
 for rate, name in sorted((rate, name) for name, rate in error_rates.items()):
-    print("%f %s" % (rate, name))
+    print("{:f} {}".format(rate, name))
 
 ###############################################################################
 # In our testing, contrary to the results of the paper, on this problem,
@@ -351,7 +351,7 @@ doc_id = np.random.randint(simple_models[0].docvecs.count)  # Pick random doc; r
 print('for doc %d...' % doc_id)
 for model in simple_models:
     inferred_docvec = model.infer_vector(alldocs[doc_id].words)
-    print('%s:\n %s' % (model, model.docvecs.most_similar([inferred_docvec], topn=3)))
+    print('{}:\n {}'.format(model, model.docvecs.most_similar([inferred_docvec], topn=3)))
 
 ###############################################################################
 # (Yes, here the stored vector from 20 epochs of training is usually one of the
@@ -367,13 +367,13 @@ import random
 doc_id = np.random.randint(simple_models[0].docvecs.count)  # pick random doc, re-run cell for more examples
 model = random.choice(simple_models)  # and a random model
 sims = model.docvecs.most_similar(doc_id, topn=model.docvecs.count)  # get *all* similar documents
-print(u'TARGET (%d): «%s»\n' % (doc_id, ' '.join(alldocs[doc_id].words)))
-print(u'SIMILAR/DISSIMILAR DOCS PER MODEL %s:\n' % model)
+print('TARGET (%d): «%s»\n' % (doc_id, ' '.join(alldocs[doc_id].words)))
+print('SIMILAR/DISSIMILAR DOCS PER MODEL %s:\n' % model)
 for label, index in [('MOST', 0), ('MEDIAN', len(sims)//2), ('LEAST', len(sims) - 1)]:
     s = sims[index]
     i = sims[index][0]
     words = ' '.join(alldocs[i].words)
-    print(u'%s %s: «%s»\n' % (label, s, words))
+    print('{} {}: «{}»\n'.format(label, s, words))
 
 ###############################################################################
 # Somewhat, in terms of reviewer tone, movie genre, etc... the MOST
@@ -402,7 +402,7 @@ target_word = pick_random_word(word_models[0])
 # target_word = 'comedy/drama'
 
 for model in word_models:
-    print('target_word: %r model: %s similar words:' % (target_word, model))
+    print('target_word: {!r} model: {} similar words:'.format(target_word, model))
     for i, (word, sim) in enumerate(model.wv.most_similar(target_word, topn=10), 1):
         print('    %d. %.2f %r' % (i, sim, word))
     print()
@@ -431,7 +431,7 @@ questions_filename = 'questions-words.txt'
 if not os.path.isfile(questions_filename):
     # Download IMDB archive
     print("Downloading analogy questions file...")
-    url = u'https://raw.githubusercontent.com/tmikolov/word2vec/master/questions-words.txt'
+    url = 'https://raw.githubusercontent.com/tmikolov/word2vec/master/questions-words.txt'
     with smart_open.open(url, 'rb') as fin:
         with smart_open.open(questions_filename, 'wb') as fout:
             fout.write(fin.read())

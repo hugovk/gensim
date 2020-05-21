@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Vit Novotny <witiko@mail.muni.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -321,8 +320,8 @@ class SparseTermSimilarityMatrix(SaveLoad):
 
                 assert \
                     X_norm > 0.0 and Y_norm > 0.0, \
-                    u"sparse documents must not contain any explicit zero entries and the similarity matrix S " \
-                    u"must satisfy x^T * S * x > 0 for any nonzero bag-of-words vector x."
+                    "sparse documents must not contain any explicit zero entries and the similarity matrix S " \
+                    "must satisfy x^T * S * x > 0 for any nonzero bag-of-words vector x."
 
                 result /= sqrt(X_norm) * sqrt(Y_norm)
                 result = np.clip(result, -1.0, 1.0)
@@ -351,8 +350,8 @@ class SparseTermSimilarityMatrix(SaveLoad):
 
                 assert \
                     X_norm.min() > 0.0 and Y_norm.min() >= 0.0, \
-                    u"sparse documents must not contain any explicit zero entries and the similarity matrix S " \
-                    u"must satisfy x^T * S * x > 0 for any nonzero bag-of-words vector x."
+                    "sparse documents must not contain any explicit zero entries and the similarity matrix S " \
+                    "must satisfy x^T * S * x > 0 for any nonzero bag-of-words vector x."
 
                 X = np.multiply(X, 1 / np.sqrt(X_norm)).T
                 Y = np.multiply(Y, 1 / np.sqrt(Y_norm))
@@ -380,8 +379,8 @@ class SparseTermSimilarityMatrix(SaveLoad):
 
                 assert \
                     X_norm.min() > 0.0 and Y_norm.min() >= 0.0, \
-                    u"sparse documents must not contain any explicit zero entries and the similarity matrix S " \
-                    u"must satisfy x^T * S * x > 0 for any nonzero bag-of-words vector x."
+                    "sparse documents must not contain any explicit zero entries and the similarity matrix S " \
+                    "must satisfy x^T * S * x > 0 for any nonzero bag-of-words vector x."
 
                 X = X.multiply(sparse.csr_matrix(1 / np.sqrt(X_norm)))
                 Y = Y.multiply(sparse.csr_matrix(1 / np.sqrt(Y_norm)))

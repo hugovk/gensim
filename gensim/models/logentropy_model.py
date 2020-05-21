@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -76,7 +75,7 @@ class LogEntropyModel(interfaces.TransformationABC):
             self.initialize(corpus)
 
     def __str__(self):
-        return "LogEntropyModel(n_docs=%s, n_words=%s)" % (self.n_docs, self.n_words)
+        return "LogEntropyModel(n_docs={}, n_words={})".format(self.n_docs, self.n_words)
 
     def initialize(self, corpus):
         """Calculates the global weighting for all terms in a given corpus and transforms the simple

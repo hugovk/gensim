@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Vimig Socrates <vimig.socrates@gmail.com> heavily influenced from @AakaashRao
 # Copyright (C) 2018 Manos Stergiadis <em.stergiadis@gmail.com>
@@ -9,7 +8,6 @@
 Automated tests for checking the output of gensim.scripts.
 """
 
-from __future__ import unicode_literals
 
 import json
 import logging

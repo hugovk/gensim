@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# encoding: utf-8
 
 """Produce translation matrix to translate the word from one language to another language, using either
 standard nearest neighbour method or globally corrected neighbour retrieval method [1]_.
@@ -104,7 +103,7 @@ from gensim import utils
 from six import string_types
 
 
-class Space(object):
+class Space:
     """An auxiliary class for storing the the words space."""
 
     def __init__(self, matrix, index2word):
@@ -258,7 +257,7 @@ class TranslationMatrix(utils.SaveLoad):
     def save(self, *args, **kwargs):
         """Save the model to file but ignoring the `source_space` and `target_space`"""
         kwargs['ignore'] = kwargs.get('ignore', ['source_space', 'target_space'])
-        super(TranslationMatrix, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def apply_transmat(self, words_space):
         """Map the source word vector to the target word vector using translation matrix.
@@ -302,7 +301,7 @@ class TranslationMatrix(utils.SaveLoad):
 
         """
 
-        if isinstance(source_words, string_types):
+        if isinstance(source_words, str):
             # pass only one word to translate
             source_words = [source_words]
 

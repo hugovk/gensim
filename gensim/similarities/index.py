@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Radim Rehurek <me@radimrehurek.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -56,7 +55,7 @@ _NOANNOY = ImportError(
 )
 
 
-class AnnoyIndexer(object):
+class AnnoyIndexer:
     """This class allows to use `Annoy <https://github.com/spotify/annoy>`_ as indexer for `most_similar` method
     from :class:`~gensim.models.word2vec.Word2Vec`, :class:`~gensim.models.doc2vec.Doc2Vec`,
     :class:`~gensim.models.fasttext.FastText` and :class:`~gensim.models.keyedvectors.Word2VecKeyedVectors` classes.
@@ -153,8 +152,8 @@ class AnnoyIndexer(object):
         """
         fname_dict = fname + '.d'
         if not (os.path.exists(fname) and os.path.exists(fname_dict)):
-            raise IOError(
-                "Can't find index files '%s' and '%s' - Unable to restore AnnoyIndexer state." % (fname, fname_dict)
+            raise OSError(
+                "Can't find index files '{}' and '{}' - Unable to restore AnnoyIndexer state.".format(fname, fname_dict)
             )
         else:
             try:

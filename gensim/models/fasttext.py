@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Authors: Shiva Manne <manneshiva@gmail.com>, Chinmaya Pancholi <chinmayapancholi13@gmail.com>
 # Copyright (C) 2018 RaRe Technologies s.r.o.
@@ -477,7 +476,7 @@ class FastText(BaseWordEmbeddingsModel):
         self.trainables.prepare_weights(hs, negative, self.wv, update=False, vocabulary=self.vocabulary)
         self.wv.bucket = self.trainables.bucket
 
-        super(FastText, self).__init__(
+        super().__init__(
             sentences=sentences, corpus_file=corpus_file, workers=workers, vector_size=size, epochs=iter,
             callbacks=callbacks, batch_words=batch_words, trim_rule=trim_rule, sg=sg, alpha=alpha, window=window,
             seed=seed, hs=hs, negative=negative, cbow_mean=cbow_mean, min_alpha=min_alpha)
@@ -602,7 +601,7 @@ class FastText(BaseWordEmbeddingsModel):
         else:
             self.vocabulary.old_vocab_len = len(self.wv.vocab)
 
-        retval = super(FastText, self).build_vocab(
+        retval = super().build_vocab(
             sentences=sentences, corpus_file=corpus_file, update=update, progress_per=progress_per,
             keep_raw_vocab=keep_raw_vocab, trim_rule=trim_rule, **kwargs)
 
@@ -798,7 +797,7 @@ class FastText(BaseWordEmbeddingsModel):
         if sentences is not None and not isinstance(sentences, Iterable):
             raise TypeError("sentences must be an iterable of list, got %r instead" % sentences)
 
-        super(FastText, self).train(
+        super().train(
             sentences=sentences, corpus_file=corpus_file, total_examples=total_examples, total_words=total_words,
             epochs=epochs, start_alpha=start_alpha, end_alpha=end_alpha, word_count=word_count,
             queue_factor=queue_factor, report_delay=report_delay, callbacks=callbacks)
@@ -875,7 +874,7 @@ class FastText(BaseWordEmbeddingsModel):
 
         """
         m = _load_fasttext_format(self.file_name, encoding=encoding)
-        for attr, val in six.iteritems(m.__dict__):
+        for attr, val in m.__dict__.items():
             setattr(self, attr, val)
 
     def save(self, *args, **kwargs):
@@ -896,7 +895,7 @@ class FastText(BaseWordEmbeddingsModel):
         """
         kwargs['ignore'] = kwargs.get(
             'ignore', ['vectors_norm', 'vectors_vocab_norm', 'vectors_ngrams_norm', 'buckets_word'])
-        super(FastText, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @classmethod
     def load(cls, *args, **kwargs):
@@ -919,7 +918,7 @@ class FastText(BaseWordEmbeddingsModel):
 
         """
         try:
-            model = super(FastText, cls).load(*args, **kwargs)
+            model = super().load(*args, **kwargs)
 
             if not hasattr(model.trainables, 'vectors_vocab_lockf') and hasattr(model.wv, 'vectors_vocab'):
                 model.trainables.vectors_vocab_lockf = ones(model.wv.vectors_vocab.shape, dtype=REAL)
@@ -980,7 +979,7 @@ class FastTextTrainables(Word2VecTrainables):
 
     """
     def __init__(self, vector_size=100, seed=1, hashfxn=hash, bucket=2000000):
-        super(FastTextTrainables, self).__init__(
+        super().__init__(
             vector_size=vector_size, seed=seed, hashfxn=hashfxn)
         self.bucket = int(bucket)
 
@@ -1008,7 +1007,7 @@ class FastTextTrainables(Word2VecTrainables):
         #
 
     def prepare_weights(self, hs, negative, wv, update=False, vocabulary=None):
-        super(FastTextTrainables, self).prepare_weights(hs, negative, wv, update=update, vocabulary=vocabulary)
+        super().prepare_weights(hs, negative, wv, update=update, vocabulary=vocabulary)
         self.init_ngrams_weights(wv, update=update, vocabulary=vocabulary)
 
     def init_ngrams_weights(self, wv, update=False, vocabulary=None):

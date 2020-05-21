@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 RARE Technologies <info@rare-technologies.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -106,7 +105,7 @@ except ImportError:
     VISDOM_INSTALLED = False
 
 
-class Metric(object):
+class Metric:
     """Base Metric class for topic model evaluation metrics.
 
     Concrete implementations include:
@@ -248,7 +247,7 @@ class CoherenceMetric(Metric):
         # only one of the model or topic would be defined
         self.model = None
         self.topics = None
-        super(CoherenceMetric, self).set_parameters(**kwargs)
+        super().set_parameters(**kwargs)
 
         cm = gensim.models.CoherenceModel(
             model=self.model, topics=self.topics, texts=self.texts, corpus=self.corpus,
@@ -301,7 +300,7 @@ class PerplexityMetric(Metric):
             The perplexity score.
 
         """
-        super(PerplexityMetric, self).set_parameters(**kwargs)
+        super().set_parameters(**kwargs)
         corpus_words = sum(cnt for document in self.corpus for _, cnt in document)
         perwordbound = self.model.bound(self.corpus) / corpus_words
         return np.exp2(-perwordbound)
@@ -366,7 +365,7 @@ class DiffMetric(Metric):
             and the word from the symmetric difference of the two topics. Only included if `annotation == True`.
 
         """
-        super(DiffMetric, self).set_parameters(**kwargs)
+        super().set_parameters(**kwargs)
         diff_diagonal, _ = self.model.diff(
             self.other_model, self.distance, self.num_words, self.n_ann_terms,
             self.diagonal, self.annotation, self.normed
@@ -434,7 +433,7 @@ class ConvergenceMetric(Metric):
             subsequent training iterations).
 
         """
-        super(ConvergenceMetric, self).set_parameters(**kwargs)
+        super().set_parameters(**kwargs)
         diff_diagonal, _ = self.model.diff(
             self.other_model, self.distance, self.num_words, self.n_ann_terms,
             self.diagonal, self.annotation, self.normed
@@ -442,7 +441,7 @@ class ConvergenceMetric(Metric):
         return np.sum(diff_diagonal)
 
 
-class Callback(object):
+class Callback:
     """A class representing routines called reactively at specific phases during trained.
 
     These can be used to log or visualize the training progress using any of the metric scores developed before.
@@ -568,7 +567,7 @@ class Callback(object):
         return current_metrics
 
 
-class CallbackAny2Vec(object):
+class CallbackAny2Vec:
     """Base class to build callbacks for :class:`~gensim.models.base_any2vec.BaseWordEmbeddingsModel`.
 
     Callbacks are used to apply custom functions over the model at specific points

@@ -169,7 +169,7 @@ pairs = [
     ('car', 'communism'),
 ]
 for w1, w2 in pairs:
-    print('%r\t%r\t%.2f' % (w1, w2, wv.similarity(w1, w2)))
+    print('{!r}\t{!r}\t{:.2f}'.format(w1, w2, wv.similarity(w1, w2)))
 
 ###############################################################################
 # Print the 5 most similar words to "car" or "minivan"
@@ -196,7 +196,7 @@ print(wv.doesnt_match(['fire', 'water', 'land', 'sea', 'air', 'car']))
 from gensim.test.utils import datapath
 from gensim import utils
 
-class MyCorpus(object):
+class MyCorpus:
     """An interator that yields sentences (lists of str)."""
 
     def __iter__(self):

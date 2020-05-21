@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
 """
 Automated tests for checking various utils functions.
 """
-from __future__ import unicode_literals
 
 import sys
 import logging
@@ -84,8 +82,8 @@ class TestIsCorpus(unittest.TestCase):
 class TestUtils(unittest.TestCase):
     def test_decode_entities(self):
         # create a string that fails to decode with unichr on narrow python builds
-        body = u'It&#146;s the Year of the Horse. YES VIN DIESEL &#128588; &#128175;'
-        expected = u'It\x92s the Year of the Horse. YES VIN DIESEL \U0001f64c \U0001f4af'
+        body = 'It&#146;s the Year of the Horse. YES VIN DIESEL &#128588; &#128175;'
+        expected = 'It\x92s the Year of the Horse. YES VIN DIESEL \U0001f64c \U0001f4af'
         self.assertEqual(utils.decode_htmlentities(body), expected)
 
     def test_open_file_existent_file(self):
@@ -115,7 +113,7 @@ class TestSampleDict(unittest.TestCase):
     def test_sample_dict(self):
         d = {1: 2, 2: 3, 3: 4, 4: 5}
         expected_dict = [(1, 2), (2, 3)]
-        expected_dict_random = [(k, v) for k, v in iteritems(d)]
+        expected_dict_random = [(k, v) for k, v in d.items()]
         sampled_dict = utils.sample_dict(d, 2, False)
         self.assertEqual(sampled_dict, expected_dict)
         sampled_dict_random = utils.sample_dict(d, 2)
@@ -282,7 +280,7 @@ def hash_main(alg):
     try:
         fun = hashmap[alg]
     except KeyError:
-        raise KeyError('invalid alg: %r expected one of %r' % (alg, sorted(hashmap)))
+        raise KeyError('invalid alg: {!r} expected one of {!r}'.format(alg, sorted(hashmap)))
 
     for line in sys.stdin:
         if 'bytes' in alg:
@@ -290,7 +288,7 @@ def hash_main(alg):
         else:
             words = line.rstrip().split(' ')
         for word in words:
-            print('u%r: %r,' % (word, fun(word)))
+            print('u{!r}: {!r},'.format(word, fun(word)))
 
 
 class HashTest(unittest.TestCase):
@@ -304,36 +302,36 @@ class HashTest(unittest.TestCase):
 
         #
         self.expected = {
-            u'команда': 1725507386,
-            u'маленьких': 3011324125,
-            u'друзей': 737001801,
-            u'возит': 4225261911,
-            u'грузы': 1301826944,
-            u'всех': 706328732,
-            u'быстрей': 1379730754,
-            u'mysterious': 1903186891,
-            u'asteroid': 1988297200,
-            u'odyssey': 310195777,
-            u'introduction': 2848265721,
-            u'北海道': 4096045468,
-            u'札幌': 3909947444,
-            u'西区': 3653372632,
+            'команда': 1725507386,
+            'маленьких': 3011324125,
+            'друзей': 737001801,
+            'возит': 4225261911,
+            'грузы': 1301826944,
+            'всех': 706328732,
+            'быстрей': 1379730754,
+            'mysterious': 1903186891,
+            'asteroid': 1988297200,
+            'odyssey': 310195777,
+            'introduction': 2848265721,
+            '北海道': 4096045468,
+            '札幌': 3909947444,
+            '西区': 3653372632,
         }
         self.expected_broken = {
-            u'команда': 962806708,
-            u'маленьких': 3633597485,
-            u'друзей': 214728041,
-            u'возит': 3590926132,
-            u'грузы': 3674544745,
-            u'всех': 3931012458,
-            u'быстрей': 822471432,
-            u'mysterious': 1903186891,
-            u'asteroid': 1988297200,
-            u'odyssey': 310195777,
-            u'introduction': 2848265721,
-            u'北海道': 4017049120,
-            u'札幌': 1706980764,
-            u'西区': 1113327900,
+            'команда': 962806708,
+            'маленьких': 3633597485,
+            'друзей': 214728041,
+            'возит': 3590926132,
+            'грузы': 3674544745,
+            'всех': 3931012458,
+            'быстрей': 822471432,
+            'mysterious': 1903186891,
+            'asteroid': 1988297200,
+            'odyssey': 310195777,
+            'introduction': 2848265721,
+            '北海道': 4017049120,
+            '札幌': 1706980764,
+            '西区': 1113327900,
         }
 
     def test_cython(self):
@@ -369,12 +367,12 @@ def ngram_main():
     try:
         fun = hashmap[alg]
     except KeyError:
-        raise KeyError('invalid alg: %r expected one of %r' % (alg, sorted(hashmap)))
+        raise KeyError('invalid alg: {!r} expected one of {!r}'.format(alg, sorted(hashmap)))
 
     for line in sys.stdin:
         word = line.rstrip('\n')
         ngrams = fun(word, minn, maxn)
-        print("%r: %r," % (word, ngrams))
+        print("{!r}: {!r},".format(word, ngrams))
 
 
 class NgramsTest(unittest.TestCase):

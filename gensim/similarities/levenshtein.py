@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Vit Novotny <witiko@mail.muni.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -137,7 +136,7 @@ class LevenshteinSimilarityIndex(TermSimilarityIndex):
         self.alpha = alpha
         self.beta = beta
         self.threshold = threshold
-        super(LevenshteinSimilarityIndex, self).__init__()
+        super().__init__()
 
     def most_similar(self, t1, topn=10):
         similarities = (

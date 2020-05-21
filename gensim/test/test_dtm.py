@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """
 Automated tests for DTM/DIM model
@@ -38,7 +37,7 @@ class TestDtmModel(unittest.TestCase):
 
             one_topic = model.show_topic(topicid=1, time=1, topn=10)
             self.assertEqual(len(one_topic), 10)
-            self.assertEqual(one_topic[0][1], u'idexx')
+            self.assertEqual(one_topic[0][1], 'idexx')
 
     def testDim(self):
         if self.dtm_path is not None:
@@ -52,7 +51,7 @@ class TestDtmModel(unittest.TestCase):
 
             one_topic = model.show_topic(topicid=1, time=1, topn=10)
             self.assertEqual(len(one_topic), 10)
-            self.assertEqual(one_topic[0][1], u'skills')
+            self.assertEqual(one_topic[0][1], 'skills')
 
     # In stderr expect "Error opening file /tmp/a65419_train_out/initial-lda-ss.dat. Failing."
     def testCalledProcessError(self):

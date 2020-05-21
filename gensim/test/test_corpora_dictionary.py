@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -21,7 +20,6 @@ from gensim.corpora import Dictionary
 from gensim.utils import to_utf8
 from gensim.test.utils import get_tmpfile, common_texts
 from six import PY3
-from six.moves import zip
 
 
 class TestDictionary(unittest.TestCase):
@@ -198,7 +196,7 @@ class TestDictionary(unittest.TestCase):
         self.assertRaises(TypeError, d.doc2bow, "žluťoučký")
 
         # unicode must be converted to utf8
-        self.assertEqual(d.doc2bow([u'\u017elu\u0165ou\u010dk\xfd']), [(0, 1)])
+        self.assertEqual(d.doc2bow(['\u017elu\u0165ou\u010dk\xfd']), [(0, 1)])
 
     def test_saveAsText(self):
         """`Dictionary` can be saved as textfile. """
@@ -214,21 +212,21 @@ class TestDictionary(unittest.TestCase):
         d.save_as_text(tmpf)
         with codecs.open(tmpf, 'r', encoding='utf-8') as file:
             serialized_lines = file.readlines()
-            self.assertEqual(serialized_lines[0], u"3\n")
+            self.assertEqual(serialized_lines[0], "3\n")
             self.assertEqual(len(serialized_lines), 4)
             # We do not know, which word will have which index
-            self.assertEqual(serialized_lines[1][1:], u"\tdruhé\t2\n")
-            self.assertEqual(serialized_lines[2][1:], u"\tprvé\t1\n")
-            self.assertEqual(serialized_lines[3][1:], u"\tslovo\t3\n")
+            self.assertEqual(serialized_lines[1][1:], "\tdruhé\t2\n")
+            self.assertEqual(serialized_lines[2][1:], "\tprvé\t1\n")
+            self.assertEqual(serialized_lines[3][1:], "\tslovo\t3\n")
 
         d.save_as_text(tmpf, sort_by_word=False)
         with codecs.open(tmpf, 'r', encoding='utf-8') as file:
             serialized_lines = file.readlines()
-            self.assertEqual(serialized_lines[0], u"3\n")
+            self.assertEqual(serialized_lines[0], "3\n")
             self.assertEqual(len(serialized_lines), 4)
-            self.assertEqual(serialized_lines[1][1:], u"\tslovo\t3\n")
-            self.assertEqual(serialized_lines[2][1:], u"\tdruhé\t2\n")
-            self.assertEqual(serialized_lines[3][1:], u"\tprvé\t1\n")
+            self.assertEqual(serialized_lines[1][1:], "\tslovo\t3\n")
+            self.assertEqual(serialized_lines[2][1:], "\tdruhé\t2\n")
+            self.assertEqual(serialized_lines[3][1:], "\tprvé\t1\n")
 
     def test_loadFromText_legacy(self):
         """
@@ -241,8 +239,8 @@ class TestDictionary(unittest.TestCase):
             file.write(no_num_docs_serialization)
 
         d = Dictionary.load_from_text(tmpf)
-        self.assertEqual(d.token2id[u"prvé"], 1)
-        self.assertEqual(d.token2id[u"slovo"], 2)
+        self.assertEqual(d.token2id["prvé"], 1)
+        self.assertEqual(d.token2id["slovo"], 2)
         self.assertEqual(d.dfs[1], 1)
         self.assertEqual(d.dfs[2], 2)
         self.assertEqual(d.num_docs, 0)
@@ -255,8 +253,8 @@ class TestDictionary(unittest.TestCase):
             file.write(no_num_docs_serialization)
 
         d = Dictionary.load_from_text(tmpf)
-        self.assertEqual(d.token2id[u"prvé"], 1)
-        self.assertEqual(d.token2id[u"slovo"], 2)
+        self.assertEqual(d.token2id["prvé"], 1)
+        self.assertEqual(d.token2id["slovo"], 2)
         self.assertEqual(d.dfs[1], 1)
         self.assertEqual(d.dfs[2], 2)
         self.assertEqual(d.num_docs, 2)
@@ -294,7 +292,7 @@ class TestDictionary(unittest.TestCase):
 
         # remove words that appear only once
         all_tokens = list(chain.from_iterable(texts))
-        tokens_once = set(word for word in set(all_tokens) if all_tokens.count(word) == 1)
+        tokens_once = {word for word in set(all_tokens) if all_tokens.count(word) == 1}
         texts = [[word for word in text if word not in tokens_once] for text in texts]
 
         dictionary = Dictionary(texts)

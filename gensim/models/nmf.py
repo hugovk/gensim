@@ -294,7 +294,7 @@ class Nmf(interfaces.TransformationABC, basemodel.BaseTopicModel):
             bestn = matutils.argsort(topic, num_words, reverse=True).ravel()
             topic = [(self.id2word[id], topic[id]) for id in bestn]
             if formatted:
-                topic = " + ".join(['%.3f*"%s"' % (v, k) for k, v in topic])
+                topic = " + ".join(['{:.3f}*"{}"'.format(v, k) for k, v in topic])
 
             shown.append((i, topic))
             if log:
@@ -536,7 +536,7 @@ class Nmf(interfaces.TransformationABC, basemodel.BaseTopicModel):
         l2 = 0
 
         for doc, doc_topics in zip(v.T, self._h.T):
-            l2 += np.sum(np.square((doc - doc_topics.dot(Wt))))
+            l2 += np.sum(np.square(doc - doc_topics.dot(Wt)))
 
         return np.sqrt(l2)
 
@@ -656,7 +656,7 @@ class Nmf(interfaces.TransformationABC, basemodel.BaseTopicModel):
 
                 chunk_overall_idx += 1
 
-                logger.info("W error diff: {}".format((self._w_error - previous_w_error)))
+                logger.info("W error diff: {}".format(self._w_error - previous_w_error))
 
     def _solve_w(self):
         """Update W."""

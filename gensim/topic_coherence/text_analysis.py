@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -68,7 +67,7 @@ def _ids_to_words(ids, dictionary):
     return top_words
 
 
-class BaseAnalyzer(object):
+class BaseAnalyzer:
     """Base class for corpus and text analyzers.
 
     Attributes
@@ -127,7 +126,7 @@ class BaseAnalyzer(object):
         raise NotImplementedError("Base classes should implement analyze_text.")
 
     def __getitem__(self, word_or_words):
-        if isinstance(word_or_words, string_types) or not hasattr(word_or_words, '__iter__'):
+        if isinstance(word_or_words, str) or not hasattr(word_or_words, '__iter__'):
             return self.get_occurrences(word_or_words)
         else:
             return self.get_co_occurrences(*word_or_words)
@@ -187,7 +186,7 @@ class UsesDictionary(BaseAnalyzer):
             set([u'foo', u'baz'])
 
         """
-        super(UsesDictionary, self).__init__(relevant_ids)
+        super().__init__(relevant_ids)
         self.relevant_words = _ids_to_words(self.relevant_ids, dictionary)
         self.dictionary = dictionary
         self.token2id = dictionary.token2id
@@ -238,7 +237,7 @@ class InvertedIndexBased(BaseAnalyzer):
             [set([]) set([])]
 
         """
-        super(InvertedIndexBased, self).__init__(*args)
+        super().__init__(*args)
         self._inverted_index = np.array([set() for _ in range(self._vocab_size)])
 
     def _get_occurrences(self, word_id):
@@ -250,7 +249,7 @@ class InvertedIndexBased(BaseAnalyzer):
         return len(s1.intersection(s2))
 
     def index_to_dict(self):
-        contiguous2id = {n: word_id for word_id, n in iteritems(self.id2contiguous)}
+        contiguous2id = {n: word_id for word_id, n in self.id2contiguous.items()}
         return {contiguous2id[n]: doc_id_set for n, doc_id_set in enumerate(self._inverted_index)}
 
 
@@ -285,7 +284,7 @@ class WindowedTextsAnalyzer(UsesDictionary):
             Dictionary instance with mappings for the relevant_ids.
 
         """
-        super(WindowedTextsAnalyzer, self).__init__(relevant_ids, dictionary)
+        super().__init__(relevant_ids, dictionary)
         self._none_token = self._vocab_size  # see _iter_texts for use of none token
 
     def accumulate(self, texts, window_size):
@@ -328,7 +327,7 @@ class WordOccurrenceAccumulator(WindowedTextsAnalyzer):
     """Accumulate word occurrences and co-occurrences from a sequence of corpus texts."""
 
     def __init__(self, *args):
-        super(WordOccurrenceAccumulator, self).__init__(*args)
+        super().__init__(*args)
         self._occurrences = np.zeros(self._vocab_size, dtype='uint32')
         self._co_occurrences = sps.lil_matrix((self._vocab_size, self._vocab_size), dtype='uint32')
 
@@ -358,8 +357,8 @@ class WordOccurrenceAccumulator(WindowedTextsAnalyzer):
         self._token_at_edge = None
         self._counter.clear()
 
-        super(WordOccurrenceAccumulator, self).accumulate(texts, window_size)
-        for combo, count in iteritems(self._counter):
+        super().accumulate(texts, window_size)
+        for combo, count in self._counter.items():
             self._co_occurrences[combo] += count
 
         return self
@@ -429,7 +428,7 @@ class ParallelWordOccurrenceAccumulator(WindowedTextsAnalyzer):
     """
 
     def __init__(self, processes, *args, **kwargs):
-        super(ParallelWordOccurrenceAccumulator, self).__init__(*args)
+        super().__init__(*args)
         if processes < 2:
             raise ValueError(
                 "Must have at least 2 processes to run in parallel; got %d" % processes)
@@ -437,7 +436,7 @@ class ParallelWordOccurrenceAccumulator(WindowedTextsAnalyzer):
         self.batch_size = kwargs.get('batch_size', 64)
 
     def __str__(self):
-        return "%s(processes=%s, batch_size=%s)" % (
+        return "{}(processes={}, batch_size={})".format(
             self.__class__.__name__, self.processes, self.batch_size)
 
     def accumulate(self, texts, window_size):
@@ -557,7 +556,7 @@ class AccumulatingWorker(mp.Process):
     """Accumulate stats from texts fed in from queue."""
 
     def __init__(self, input_q, output_q, accumulator, window_size):
-        super(AccumulatingWorker, self).__init__()
+        super().__init__()
         self.input_q = input_q
         self.output_q = output_q
         self.accumulator = accumulator
@@ -615,13 +614,13 @@ class WordVectorsAccumulator(UsesDictionary):
     """
 
     def __init__(self, relevant_ids, dictionary, model=None, **model_kwargs):
-        super(WordVectorsAccumulator, self).__init__(relevant_ids, dictionary)
+        super().__init__(relevant_ids, dictionary)
         self.model = model
         self.model_kwargs = model_kwargs
 
     def not_in_vocab(self, words):
         uniq_words = set(utils.flatten(words))
-        return set(word for word in uniq_words if word not in self.model.vocab)
+        return {word for word in uniq_words if word not in self.model.vocab}
 
     def get_occurrences(self, word):
         """Return number of docs the word occurs in, once `accumulate` has been called."""

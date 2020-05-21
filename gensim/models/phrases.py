@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # Copyright (C) 2011 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -68,14 +67,11 @@ from math import log
 import pickle
 import six
 
-from six import iteritems, string_types, PY2, next
+from six import iteritems, string_types, PY2
 
 from gensim import utils, interfaces
 
-if PY2:
-    from inspect import getargspec
-else:
-    from inspect import getfullargspec as getargspec
+from inspect import getfullargspec as getargspec
 
 logger = logging.getLogger(__name__)
 
@@ -105,7 +101,7 @@ def _is_single(obj):
     except StopIteration:
         # An empty object is a single document
         return True, obj
-    if isinstance(peek, string_types):
+    if isinstance(peek, str):
         # It's a document, return the iterator
         return True, obj_iter
     if temp_iter is obj:
@@ -116,7 +112,7 @@ def _is_single(obj):
         return False, obj
 
 
-class SentenceAnalyzer(object):
+class SentenceAnalyzer:
     """Base util class for :class:`~gensim.models.phrases.Phrases` and :class:`~gensim.models.phrases.Phraser`."""
     def score_item(self, worda, wordb, components, scorer):
         """Get bi-gram score statistics.
@@ -226,7 +222,7 @@ class PhrasesTransformation(interfaces.TransformationABC):
             Sequence of arguments, see :class:`~gensim.utils.SaveLoad.load` for more information.
 
         """
-        model = super(PhrasesTransformation, cls).load(*args, **kwargs)
+        model = super().load(*args, **kwargs)
         # update older models
         # if value in phrasegrams dict is a tuple, load only the scores.
 
@@ -242,7 +238,7 @@ class PhrasesTransformation(interfaces.TransformationABC):
             model.scoring = original_scorer
         # if there is a scoring parameter, and it's a text value, load the proper scoring function
         if hasattr(model, 'scoring'):
-            if isinstance(model.scoring, six.string_types):
+            if isinstance(model.scoring, str):
                 if model.scoring == 'default':
                     logger.info('older version of %s loaded with "default" scoring parameter', cls.__name__)
                     logger.info('setting scoring method to original_scorer pluggable scoring method for compatibility')
@@ -253,7 +249,7 @@ class PhrasesTransformation(interfaces.TransformationABC):
                     model.scoring = npmi_scorer
                 else:
                     raise ValueError(
-                        'failed to load %s model with unknown scoring setting %s' % (cls.__name__, model.scoring))
+                        'failed to load {} model with unknown scoring setting {}'.format(cls.__name__, model.scoring))
         # if there is no common_terms attribute, initialize
         if not hasattr(model, "common_terms"):
             logger.info('older version of %s loaded without common_terms attribute', cls.__name__)
@@ -378,7 +374,7 @@ class Phrases(SentenceAnalyzer, PhrasesTransformation):
         # intentially override the value of the scoring parameter rather than set self.scoring here,
         # to still run the check of scoring function parameters in the next code block
 
-        if isinstance(scoring, six.string_types):
+        if isinstance(scoring, str):
             if scoring == 'default':
                 scoring = original_scorer
             elif scoring == 'npmi':
@@ -431,7 +427,7 @@ class Phrases(SentenceAnalyzer, PhrasesTransformation):
             Sequence of arguments, see :class:`~gensim.utils.SaveLoad.load` for more information.
 
         """
-        model = super(Phrases, cls).load(*args, **kwargs)
+        model = super().load(*args, **kwargs)
         if not hasattr(model, 'corpus_word_count'):
             logger.info('older version of %s loaded without corpus_word_count', cls.__name__)
             logger.info('Setting it to 0, do not use it in your scoring function.')
@@ -569,7 +565,7 @@ class Phrases(SentenceAnalyzer, PhrasesTransformation):
         if len(self.vocab) > 0:
             logger.info("merging %i counts into %s", len(vocab), self)
             self.min_reduce = max(self.min_reduce, min_reduce)
-            for word, count in iteritems(vocab):
+            for word, count in vocab.items():
                 self.vocab[word] += count
             if len(self.vocab) > self.max_vocab_size:
                 utils.prune_vocab(self.vocab, self.min_reduce)
@@ -946,4 +942,4 @@ if __name__ == '__main__':
     # test_doc = LineSentence('test/test_data/testcorpus.txt')
     bigram = Phrases(sentences, min_count=5, threshold=100)
     for s in bigram[sentences]:
-        print(utils.to_utf8(u' '.join(s)))
+        print(utils.to_utf8(' '.join(s)))

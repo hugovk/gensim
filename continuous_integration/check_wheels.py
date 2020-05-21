@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019 RaRe Technologies s.r.o.
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -10,7 +9,7 @@ import sys
 import requests
 
 def to_int(value):
-    value = ''.join((x for x in value if x.isdigit()))
+    value = ''.join(x for x in value if x.isdigit())
     try:
         return int(value)
     except Exception:

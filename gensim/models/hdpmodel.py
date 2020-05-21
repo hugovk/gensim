@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2012 Jonathan Esterhazy <jonathan.esterhazy at gmail.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -49,7 +48,6 @@ The model can be updated (trained) with new documents via
     >>> hdp.update([[(1, 2)], [(1, 1), (4, 5)]])
 
 """
-from __future__ import with_statement
 
 import logging
 import time
@@ -57,7 +55,6 @@ import warnings
 
 import numpy as np
 from scipy.special import gammaln, psi  # gamma function utils
-from six.moves import zip, range
 
 from gensim import interfaces, utils, matutils
 from gensim.matutils import dirichlet_expectation, mean_absolute_difference
@@ -142,7 +139,7 @@ def lda_e_step(doc_word_ids, doc_word_counts, alpha, beta, max_iter=100):
     return likelihood, gamma
 
 
-class SuffStats(object):
+class SuffStats:
     """Stores sufficient statistics for the current chunk of document(s) whenever Hdp model is updated with new corpus.
     These stats are used when updating lambda and top level sticks. The statistics include number of documents in the
     chunk, length of words in the documents and top level truncation level.
@@ -845,7 +842,7 @@ class HdpModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
             fname = 'final'
         else:
             fname = 'doc-%i' % doc_count
-        fname = '%s/%s.topics' % (self.outputdir, fname)
+        fname = '{}/{}.topics'.format(self.outputdir, fname)
         logger.info("saving topics to %s", fname)
         betas = self.m_lambda + self.m_eta
         np.savetxt(fname, betas)
@@ -955,7 +952,7 @@ class HdpModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
         return score
 
 
-class HdpTopicFormatter(object):
+class HdpTopicFormatter:
     """Helper class for :class:`gensim.models.hdpmodel.HdpModel` to format the output of topics."""
     (STYLE_GENSIM, STYLE_PRETTY) = (1, 2)
 
@@ -1184,9 +1181,9 @@ class HdpTopicFormatter(object):
 
         """
         if self.STYLE_GENSIM == self.style:
-            fmt = ' + '.join('%.3f*%s' % (weight, word) for (word, weight) in topic_terms)
+            fmt = ' + '.join('{:.3f}*{}'.format(weight, word) for (word, weight) in topic_terms)
         else:
-            fmt = '\n'.join('    %20s    %.8f' % (word, weight) for (word, weight) in topic_terms)
+            fmt = '\n'.join('    {:>20}    {:.8f}'.format(word, weight) for (word, weight) in topic_terms)
 
         fmt = (topic_id, fmt)
         return fmt

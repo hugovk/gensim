@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -7,14 +6,12 @@
 
 """Corpus in `GibbsLda++ format <http://gibbslda.sourceforge.net/>`_."""
 
-from __future__ import with_statement
 
 import logging
 from collections import Counter
 
 from gensim import utils
 from gensim.corpora import IndexedCorpus
-from six.moves import zip, range
 
 
 logger = logging.getLogger(__name__)

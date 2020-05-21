@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2012 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -41,7 +40,7 @@ class NormModel(interfaces.TransformationABC):
             pass
 
     def __str__(self):
-        return "NormModel(num_docs=%s, num_nnz=%s, norm=%s)" % (self.num_docs, self.num_nnz, self.norm)
+        return "NormModel(num_docs={}, num_nnz={}, norm={})".format(self.num_docs, self.num_nnz, self.norm)
 
     def calc_norm(self, corpus):
         """Calculate the norm by calling :func:`~gensim.matutils.unitvec` with the norm parameter.

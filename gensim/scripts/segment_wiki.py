@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Jayant Jain <jayant@rare-technologies.com>
 # Copyright (C) 2016 RaRe Technologies
@@ -102,8 +101,7 @@ def segment_all_articles(file_path, min_article_character=200, workers=None, inc
         wiki_sections_corpus.metadata = True
         wiki_sections_text = wiki_sections_corpus.get_texts_with_sections()
 
-        for article in wiki_sections_text:
-            yield article
+        yield from wiki_sections_text
 
 
 def segment_and_write_all_articles(file_path, output_file, min_article_character=200, workers=None,

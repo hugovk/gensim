@@ -67,7 +67,7 @@ if __name__ == '__main__':
     language = sys.argv[1]
 
     # construct the config, which holds information about sources, data file filenames etc.
-    config = dmlcorpus.DmlConfig('%s_%s' % (PREFIX, language), resultDir=RESULT_DIR, acceptLangs=[language])
+    config = dmlcorpus.DmlConfig('{}_{}'.format(PREFIX, language), resultDir=RESULT_DIR, acceptLangs=[language])
     for source in SOURCE_LIST:
         config.addSource(source)
     buildDmlCorpus(config)

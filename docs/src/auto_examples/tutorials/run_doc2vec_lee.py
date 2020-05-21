@@ -279,9 +279,9 @@ print(counter)
 # This is great and not entirely surprising. We can take a look at an example:
 #
 print('Document ({}): «{}»\n'.format(doc_id, ' '.join(train_corpus[doc_id].words)))
-print(u'SIMILAR/DISSIMILAR DOCS PER MODEL %s:\n' % model)
+print('SIMILAR/DISSIMILAR DOCS PER MODEL %s:\n' % model)
 for label, index in [('MOST', 0), ('SECOND-MOST', 1), ('MEDIAN', len(sims)//2), ('LEAST', len(sims) - 1)]:
-    print(u'%s %s: «%s»\n' % (label, sims[index], ' '.join(train_corpus[sims[index][0]].words)))
+    print('{} {}: «{}»\n'.format(label, sims[index], ' '.join(train_corpus[sims[index][0]].words)))
 
 ###############################################################################
 # Notice above that the most similar document (usually the same text) is has a
@@ -318,9 +318,9 @@ sims = model.docvecs.most_similar([inferred_vector], topn=len(model.docvecs))
 
 # Compare and print the most/median/least similar documents from the train corpus
 print('Test Document ({}): «{}»\n'.format(doc_id, ' '.join(test_corpus[doc_id])))
-print(u'SIMILAR/DISSIMILAR DOCS PER MODEL %s:\n' % model)
+print('SIMILAR/DISSIMILAR DOCS PER MODEL %s:\n' % model)
 for label, index in [('MOST', 0), ('MEDIAN', len(sims)//2), ('LEAST', len(sims) - 1)]:
-    print(u'%s %s: «%s»\n' % (label, sims[index], ' '.join(train_corpus[sims[index][0]].words)))
+    print('{} {}: «{}»\n'.format(label, sims[index], ' '.join(train_corpus[sims[index][0]].words)))
 
 ###############################################################################
 # Conclusion

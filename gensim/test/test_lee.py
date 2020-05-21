@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# encoding: utf-8
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -22,7 +21,6 @@ An empirical evaluation of models of text document similarity.
 Proceedings of the 27th Annual Conference of the Cognitive Science Society
 """
 
-from __future__ import with_statement
 
 import logging
 import os.path

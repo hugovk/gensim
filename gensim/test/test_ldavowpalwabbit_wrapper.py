@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -154,7 +153,7 @@ class TestLdaVowpalWabbit(unittest.TestCase):
             # get list of original topics that each word actually belongs to
             ids = []
             for word in topic_words:
-                for src_topic_words, src_topic_id in six.iteritems(topic_map):
+                for src_topic_words, src_topic_id in topic_map.items():
                     if word in src_topic_words:
                         ids.append(src_topic_id)
 
@@ -165,7 +164,7 @@ class TestLdaVowpalWabbit(unittest.TestCase):
 
             # if at least 6/10 words assigned to same topic, consider it coherent
             max_count = 0
-            for count in six.itervalues(counts):
+            for count in counts.values():
                 max_count = max(max_count, count)
 
             if max_count >= 6:

@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
 """Corpus in `Mallet format <http://mallet.cs.umass.edu/import.php>`_."""
 
-from __future__ import with_statement
 
 import logging
 
@@ -129,7 +127,7 @@ class MalletCorpus(LowCorpus):
         docid, doclang = split_line[0], split_line[1]
         words = split_line[2] if len(split_line) >= 3 else ''
 
-        doc = super(MalletCorpus, self).line2doc(words)
+        doc = super().line2doc(words)
 
         if self.metadata:
             return doc, (docid, doclang)
@@ -194,7 +192,7 @@ class MalletCorpus(LowCorpus):
                         truncated += 1
                     words.extend([utils.to_unicode(id2word[wordid])] * int(value))
                 offsets.append(fout.tell())
-                fout.write(utils.to_utf8('%s %s %s\n' % (doc_id, doc_lang, ' '.join(words))))
+                fout.write(utils.to_utf8('{} {} {}\n'.format(doc_id, doc_lang, ' '.join(words))))
 
         if truncated:
             logger.warning(

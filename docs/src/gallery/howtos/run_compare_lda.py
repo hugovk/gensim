@@ -29,7 +29,7 @@ eng_stopwords = set(stopwords.words('english'))
 
 tokenizer = RegexpTokenizer(r'\s+', gaps=True)
 stemmer = PorterStemmer()
-translate_tab = {ord(p): u" " for p in punctuation}
+translate_tab = {ord(p): " " for p in punctuation}
 
 def text2tokens(raw_text):
     """Convert a raw text to a list of stemmed tokens."""

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -128,7 +127,7 @@ class TestFastText(unittest.TestCase):
         try:
             model = fasttext.FastText.load_fasttext_format(self.test_model_file)
         except Exception as exc:
-            self.fail('Unable to load FastText model from file %s: %s' % (self.test_model_file, exc))
+            self.fail('Unable to load FastText model from file {}: {}'.format(self.test_model_file, exc))
         vocab_size, model_size = 1762, 10
         self.assertEqual(model.wv.syn0.shape, (vocab_size, model_size))
         self.assertEqual(len(model.wv.vocab), vocab_size, model_size)
@@ -179,7 +178,7 @@ class TestFastText(unittest.TestCase):
         try:
             new_model = fasttext.FastText.load_fasttext_format(self.test_new_model_file)
         except Exception as exc:
-            self.fail('Unable to load FastText model from file %s: %s' % (self.test_new_model_file, exc))
+            self.fail('Unable to load FastText model from file {}: {}'.format(self.test_new_model_file, exc))
         vocab_size, model_size = 1763, 10
         self.assertEqual(new_model.wv.syn0.shape, (vocab_size, model_size))
         self.assertEqual(len(new_model.wv.vocab), vocab_size, model_size)
@@ -238,18 +237,18 @@ class TestFastText(unittest.TestCase):
     def testLoadModelWithNonAsciiVocab(self):
         """Test loading model with non-ascii words in vocab"""
         model = fasttext.FastText.load_fasttext_format(datapath('non_ascii_fasttext'))
-        self.assertTrue(u'který' in model)
+        self.assertTrue('který' in model)
         try:
-            vector = model[u'který']  # noqa:F841
+            vector = model['který']  # noqa:F841
         except UnicodeDecodeError:
             self.fail('Unable to access vector for utf8 encoded non-ascii word')
 
     def testLoadModelNonUtf8Encoding(self):
         """Test loading model with words in user-specified encoding"""
         model = fasttext.FastText.load_fasttext_format(datapath('cp852_fasttext'), encoding='cp852')
-        self.assertTrue(u'který' in model)
+        self.assertTrue('který' in model)
         try:
-            vector = model[u'který']  # noqa:F841
+            vector = model['který']  # noqa:F841
         except KeyError:
             self.fail('Unable to access vector for cp-852 word')
 

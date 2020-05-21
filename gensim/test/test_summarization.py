@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# encoding: utf-8
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -184,7 +183,7 @@ class TestSummarizationTest(unittest.TestCase):
         # Tests that the summarization of a text with unrelated sentences is not empty string.
         text = self._get_text_from_test_data("testsummarization_unrelated.txt")
         generated_summary = summarize(text)
-        self.assertNotEqual(generated_summary, u"")
+        self.assertNotEqual(generated_summary, "")
 
     def test_text_summarization_on_short_input_text_is_empty_string(self):
         text = self._get_text_from_test_data("testsummarization_unrelated.txt")
@@ -192,7 +191,7 @@ class TestSummarizationTest(unittest.TestCase):
         # Keeps the first 8 sentences to make the text shorter.
         text = "\n".join(text.split('\n')[:8])
 
-        self.assertNotEqual(summarize(text), u"")
+        self.assertNotEqual(summarize(text), "")
 
     def test_text_summarization_raises_exception_on_single_input_sentence(self):
         text = self._get_text_from_test_data("testsummarization_unrelated.txt")
@@ -216,7 +215,7 @@ class TestSummarizationTest(unittest.TestCase):
         self.assertNotEqual(summarize_corpus(corpus), [])
 
     def test_empty_text_summarization_is_empty_string(self):
-        self.assertEqual(summarize(""), u"")
+        self.assertEqual(summarize(""), "")
 
     def test_empty_text_summarization_with_split_is_empty_list(self):
         self.assertEqual(summarize("", split=True), [])
@@ -270,7 +269,7 @@ class TestSummarizationTest(unittest.TestCase):
 
         with utils.open(os.path.join(pre_path, "head500.noblanks.cor"), 'rb') as f:
             text = utils.to_unicode(f.read())
-        text = u' '.join(text.split()[:10240])
+        text = ' '.join(text.split()[:10240])
         kwds = mz_keywords(text)
         self.assertTrue(kwds.startswith('autism'))
         self.assertTrue(kwds.endswith('uk'))
@@ -297,7 +296,7 @@ class TestSummarizationTest(unittest.TestCase):
 
     def test_low_distinct_words_summarization_is_empty_string(self):
         text = self._get_text_from_test_data("testlowdistinctwords.txt")
-        self.assertEqual(summarize(text), u"")
+        self.assertEqual(summarize(text), "")
 
     def test_low_distinct_words_summarization_with_split_is_empty_list(self):
         text = self._get_text_from_test_data("testlowdistinctwords.txt")

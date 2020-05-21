@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -120,11 +119,11 @@ class TestBM25(unittest.TestCase):
         first_epsilon = 1.0
         second_epsilon = 2.0
         bm25 = BM25(corpus)
-        words_with_negative_idfs = set([
+        words_with_negative_idfs = {
             word
             for word, idf in bm25.idf.items()
             if idf < 0
-        ])
+        }
         index, doc = [
             (index, document)
             for index, document

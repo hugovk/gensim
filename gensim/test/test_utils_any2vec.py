@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2017 Radim Rehurek <me@radimrehurek.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -34,7 +33,7 @@ def save_dict_to_word2vec_formated_file(fname, word2vec_dict):
 
         for word, vector in word2vec_dict.items():
             f.write(word.encode())
-            f.write(' '.encode())
+            f.write(b' ')
             f.write(np.array(vector).astype(np.float32).tobytes())
 
 

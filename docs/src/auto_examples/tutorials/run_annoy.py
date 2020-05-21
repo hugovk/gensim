@@ -142,10 +142,10 @@ queries = 10000
 
 gensim_time = avg_query_time(queries=queries)
 annoy_time = avg_query_time(annoy_index, queries=queries)
-print("Gensim (s/query):\t{0:.5f}".format(gensim_time))
-print("Annoy (s/query):\t{0:.5f}".format(annoy_time))
+print("Gensim (s/query):\t{:.5f}".format(gensim_time))
+print("Annoy (s/query):\t{:.5f}".format(annoy_time))
 speed_improvement = gensim_time / annoy_time
-print ("\nAnnoy is {0:.2f} times faster on average on this particular run".format(speed_improvement))
+print ("\nAnnoy is {:.2f} times faster on average on this particular run".format(speed_improvement))
 
 ###############################################################################
 # **This speedup factor is by no means constant** and will vary greatly from

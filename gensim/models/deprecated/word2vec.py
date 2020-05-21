@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Radim Rehurek <me@radimrehurek.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -125,7 +124,6 @@ where "words" are actually multiword expressions, such as `new_york_times` or `f
        Distributed Representations of Words and Phrases and their Compositionality. In Proceedings of NIPS, 2013.
 .. [3] Optimizing word2vec in gensim, http://radimrehurek.com/2013/09/word2vec-in-python-part-two-optimizing/
 """
-from __future__ import division  # py3 "true division"
 
 import logging
 import sys
@@ -157,7 +155,6 @@ from scipy.special import expit
 from gensim import utils
 from gensim import matutils  # utility fnc for pickling, common scipy operations etc
 from six import iteritems, itervalues, string_types
-from six.moves import range
 from types import GeneratorType
 
 logger = logging.getLogger(__name__)
@@ -668,7 +665,7 @@ class Word2Vec(SaveLoad):
         logger.info("constructing a huffman tree from %i words", len(self.wv.vocab))
 
         # build the huffman tree
-        heap = list(itervalues(self.wv.vocab))
+        heap = list(self.wv.vocab.values())
         heapq.heapify(heap)
         for i in range(len(self.wv.vocab) - 1):
             min1, min2 = heapq.heappop(heap), heapq.heappop(heap)
@@ -744,7 +741,7 @@ class Word2Vec(SaveLoad):
         raw_vocab = word_freq
         logger.info(
             "collected %i different raw word, with total frequency of %i",
-            len(raw_vocab), sum(itervalues(raw_vocab))
+            len(raw_vocab), sum(raw_vocab.values())
         )
 
         # Since no sentences are provided, this is to control the corpus_count
@@ -765,7 +762,7 @@ class Word2Vec(SaveLoad):
         checked_string_types = 0
         for sentence_no, sentence in enumerate(sentences):
             if not checked_string_types:
-                if isinstance(sentence, string_types):
+                if isinstance(sentence, str):
                     logger.warning(
                         "Each 'sentences' item should be a list of words (usually unicode strings). "
                         "First item here is instead plain %s.",
@@ -823,7 +820,7 @@ class Word2Vec(SaveLoad):
                 self.sample = sample
                 self.wv.vocab = {}
 
-            for word, v in iteritems(self.raw_vocab):
+            for word, v in self.raw_vocab.items():
                 if keep_vocab_item(word, v, min_count, trim_rule=trim_rule):
                     retain_words.append(word)
                     retain_total += v
@@ -849,7 +846,7 @@ class Word2Vec(SaveLoad):
             logger.info("Updating model with new vocabulary")
             new_total = pre_exist_total = 0
             new_words = pre_exist_words = []
-            for word, v in iteritems(self.raw_vocab):
+            for word, v in self.raw_vocab.items():
                 if keep_vocab_item(word, v, min_count, trim_rule=trim_rule):
                     if word in self.wv.vocab:
                         pre_exist_words.append(word)
@@ -1574,7 +1571,7 @@ class Word2Vec(SaveLoad):
         return self.wv.evaluate_word_pairs(pairs, delimiter, restrict_vocab, case_insensitive, dummy4unknown)
 
     def __str__(self):
-        return "%s(vocab=%s, size=%s, alpha=%s)" % (
+        return "{}(vocab={}, size={}, alpha={})".format(
             self.__class__.__name__, len(self.wv.index2word), self.vector_size, self.alpha
         )
 
@@ -1608,13 +1605,13 @@ class Word2Vec(SaveLoad):
         # don't bother storing the cached normalized vectors, recalculable table
         kwargs['ignore'] = kwargs.get('ignore', ['syn0norm', 'table', 'cum_table'])
 
-        super(Word2Vec, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     save.__doc__ = SaveLoad.save.__doc__
 
     @classmethod
     def load(cls, *args, **kwargs):
-        model = super(Word2Vec, cls).load(*args, **kwargs)
+        model = super().load(*args, **kwargs)
         # update older models
         if hasattr(model, 'table'):
             delattr(model, 'table')  # discard in favor of cum_table
@@ -1640,7 +1637,7 @@ class Word2Vec(SaveLoad):
         return model
 
     def _load_specials(self, *args, **kwargs):
-        super(Word2Vec, self)._load_specials(*args, **kwargs)
+        super()._load_specials(*args, **kwargs)
         # loading from a pre-KeyedVectors word2vec model
         if not hasattr(self, 'wv'):
             wv = KeyedVectors()
@@ -1664,7 +1661,7 @@ class Word2Vec(SaveLoad):
         return self.running_training_loss
 
 
-class BrownCorpus(object):
+class BrownCorpus:
     """Iterate over sentences from the Brown corpus (part of NLTK data)."""
 
     def __init__(self, dirname):
@@ -1682,13 +1679,13 @@ class BrownCorpus(object):
                     # each token is WORD/POS_TAG
                     token_tags = [t.split('/') for t in line.split() if len(t.split('/')) == 2]
                     # ignore words with non-alphabetic tags like ",", "!" etc (punctuation, weird stuff)
-                    words = ["%s/%s" % (token.lower(), tag[:2]) for token, tag in token_tags if tag[:2].isalpha()]
+                    words = ["{}/{}".format(token.lower(), tag[:2]) for token, tag in token_tags if tag[:2].isalpha()]
                     if not words:  # don't bother sending out empty sentences
                         continue
                     yield words
 
 
-class Text8Corpus(object):
+class Text8Corpus:
     """Iterate over sentences from the "text8" corpus, unzipped from http://mattmahoney.net/dc/text8.zip ."""
 
     def __init__(self, fname, max_sentence_length=MAX_WORDS_IN_BATCH):
@@ -1717,7 +1714,7 @@ class Text8Corpus(object):
                     sentence = sentence[self.max_sentence_length:]
 
 
-class LineSentence(object):
+class LineSentence:
     """
     Simple format: one sentence = one line; words already preprocessed and separated by whitespace.
     """
@@ -1764,7 +1761,7 @@ class LineSentence(object):
                         i += self.max_sentence_length
 
 
-class PathLineSentences(object):
+class PathLineSentences:
     """
 
     Works like word2vec.LineSentence, but will process all files in a directory in alphabetical order by filename.

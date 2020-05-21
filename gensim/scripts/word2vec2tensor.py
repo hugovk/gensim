@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Vimig Socrates <vimig.socrates@gmail.com>
 # Copyright (C) 2016 Loreto Parisi <loretoparisi@gmail.com>

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -92,7 +91,6 @@ import numpy as np
 import six
 from scipy.special import gammaln, psi  # gamma function utils
 from scipy.special import polygamma
-from six.moves import range
 from collections import defaultdict
 
 from gensim import interfaces, utils, matutils
@@ -300,7 +298,7 @@ class LdaState(utils.SaveLoad):
             The state loaded from the given file.
 
         """
-        result = super(LdaState, cls).load(fname, *args, **kwargs)
+        result = super().load(fname, *args, **kwargs)
 
         # dtype could be absent in old models
         if not hasattr(result, 'dtype'):
@@ -462,7 +460,7 @@ class LdaModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
         assert self.alpha.shape == (self.num_topics,), \
             "Invalid alpha shape. Got shape %s, but expected (%d, )" % (str(self.alpha.shape), self.num_topics)
 
-        if isinstance(eta, six.string_types):
+        if isinstance(eta, str):
             if eta == 'asymmetric':
                 raise ValueError("The 'asymmetric' option cannot be used for eta")
 
@@ -554,7 +552,7 @@ class LdaModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
 
         is_auto = False
 
-        if isinstance(prior, six.string_types):
+        if isinstance(prior, str):
             if prior == 'symmetric':
                 logger.info("using symmetric %s at %s", name, 1.0 / self.num_topics)
                 init_prior = np.fromiter((1.0 / self.num_topics for i in range(prior_shape)),
@@ -571,7 +569,7 @@ class LdaModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
                 if name == 'alpha':
                     logger.info("using autotuned %s, starting with %s", name, list(init_prior))
             else:
-                raise ValueError("Unable to determine proper %s value given '%s'" % (name, prior))
+                raise ValueError("Unable to determine proper {} value given '{}'".format(name, prior))
         elif isinstance(prior, list):
             init_prior = np.asarray(prior, dtype=self.dtype)
         elif isinstance(prior, np.ndarray):
@@ -592,7 +590,7 @@ class LdaModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
             Human readable representation of the most important model parameters.
 
         """
-        return "LdaModel(num_terms=%s, num_topics=%s, decay=%s, chunksize=%s)" % (
+        return "LdaModel(num_terms={}, num_topics={}, decay={}, chunksize={})".format(
             self.num_terms, self.num_topics, self.decay, self.chunksize
         )
 
@@ -667,7 +665,7 @@ class LdaModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
         # Inference code copied from Hoffman's `onlineldavb.py` (esp. the
         # Lee&Seung trick which speeds things up by an order of magnitude, compared
         # to Blei's original LDA-C code, cool!).
-        integer_types = six.integer_types + (np.integer,)
+        integer_types = (int,) + (np.integer,)
         epsilon = np.finfo(self.dtype).eps
         for d, doc in enumerate(chunk):
             if len(doc) > 0 and not isinstance(doc[0][0], integer_types):
@@ -1166,7 +1164,7 @@ class LdaModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
             bestn = matutils.argsort(topic_, num_words, reverse=True)
             topic_ = [(self.id2word[id], topic_[id]) for id in bestn]
             if formatted:
-                topic_ = ' + '.join('%.3f*"%s"' % (v, k) for k, v in topic_)
+                topic_ = ' + '.join('{:.3f}*"{}"'.format(v, k) for k, v in topic_)
 
             shown.append((i, topic_))
             if log:
@@ -1578,7 +1576,7 @@ class LdaModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
         # make sure 'state', 'id2word' and 'dispatcher' are ignored from the pickled object, even if
         # someone sets the ignore list themselves
         if ignore is not None and ignore:
-            if isinstance(ignore, six.string_types):
+            if isinstance(ignore, str):
                 ignore = [ignore]
             ignore = [e for e in ignore if e]  # make sure None and '' are not in the list
             ignore = list({'state', 'dispatcher', 'id2word'} | set(ignore))
@@ -1590,21 +1588,21 @@ class LdaModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
         separately_explicit = ['expElogbeta', 'sstats']
         # Also add 'alpha' and 'eta' to separately list if they are set 'auto' or some
         # array manually.
-        if (isinstance(self.alpha, six.string_types) and self.alpha == 'auto') or \
+        if (isinstance(self.alpha, str) and self.alpha == 'auto') or \
                 (isinstance(self.alpha, np.ndarray) and len(self.alpha.shape) != 1):
             separately_explicit.append('alpha')
-        if (isinstance(self.eta, six.string_types) and self.eta == 'auto') or \
+        if (isinstance(self.eta, str) and self.eta == 'auto') or \
                 (isinstance(self.eta, np.ndarray) and len(self.eta.shape) != 1):
             separately_explicit.append('eta')
         # Merge separately_explicit with separately.
         if separately:
-            if isinstance(separately, six.string_types):
+            if isinstance(separately, str):
                 separately = [separately]
             separately = [e for e in separately if e]  # make sure None and '' are not in the list
             separately = list(set(separately_explicit) | set(separately))
         else:
             separately = separately_explicit
-        super(LdaModel, self).save(fname, ignore=ignore, separately=separately, *args, **kwargs)
+        super().save(fname, ignore=ignore, separately=separately, *args, **kwargs)
 
     @classmethod
     def load(cls, fname, *args, **kwargs):
@@ -1637,7 +1635,7 @@ class LdaModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
 
         """
         kwargs['mmap'] = kwargs.get('mmap', None)
-        result = super(LdaModel, cls).load(fname, *args, **kwargs)
+        result = super().load(fname, *args, **kwargs)
 
         # check if `random_state` attribute has been set after main pickle load
         # if set -> the model to be loaded was saved using a >= 0.13.2 version of Gensim

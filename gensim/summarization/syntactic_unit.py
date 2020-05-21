@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -9,7 +8,7 @@
 """
 
 
-class SyntacticUnit(object):
+class SyntacticUnit:
     """SyntacticUnit class.
 
     Attributes

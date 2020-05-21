@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -140,9 +139,9 @@ class PhrasesData:
     unicode_sentences = [[to_unicode(w) for w in sentence] for sentence in sentences]
     common_terms = frozenset()
 
-    bigram1 = u'response_time'
-    bigram2 = u'graph_minors'
-    bigram3 = u'human_interface'
+    bigram1 = 'response_time'
+    bigram2 = 'graph_minors'
+    bigram3 = 'human_interface'
 
     def gen_sentences(self):
         return ((w for w in sentence) for sentence in self.sentences)
@@ -247,13 +246,13 @@ class PhrasesCommon:
 
     def testEncoding(self):
         """Test that both utf8 and unicode input work; output must be unicode."""
-        expected = [u'survey', u'user', u'computer', u'system', u'response_time']
+        expected = ['survey', 'user', 'computer', 'system', 'response_time']
 
         self.assertEqual(self.bigram_utf8[self.sentences[1]], expected)
         self.assertEqual(self.bigram_unicode[self.sentences[1]], expected)
 
         transformed = ' '.join(self.bigram_utf8[self.sentences[1]])
-        self.assertTrue(isinstance(transformed, six.text_type))
+        self.assertTrue(isinstance(transformed, str))
 
 
 # scorer for testCustomScorer
@@ -387,10 +386,10 @@ class TestPhrasesPersistence(PhrasesData, unittest.TestCase):
             for phrase, score in bigram_loaded.export_phrases(test_sentences):
                 seen_scores.add(round(score, 3))
 
-            assert seen_scores == set([
+            assert seen_scores == {
                 5.167,  # score for graph minors
                 3.444  # score for human interface
-            ])
+            }
 
     def testSaveLoadStringScoring(self):
         """ Saving and loading a Phrases object with a string scoring parameter.
@@ -401,10 +400,10 @@ class TestPhrasesPersistence(PhrasesData, unittest.TestCase):
         for phrase, score in bigram_loaded.export_phrases(test_sentences):
             seen_scores.add(round(score, 3))
 
-        assert seen_scores == set([
+        assert seen_scores == {
             5.167,  # score for graph minors
             3.444  # score for human interface
-        ])
+        }
 
     def testSaveLoadNoScoring(self):
         """ Saving and loading a Phrases object with no scoring parameter.
@@ -416,10 +415,10 @@ class TestPhrasesPersistence(PhrasesData, unittest.TestCase):
         for phrase, score in bigram_loaded.export_phrases(test_sentences):
             seen_scores.add(round(score, 3))
 
-        assert seen_scores == set([
+        assert seen_scores == {
             5.167,  # score for graph minors
             3.444  # score for human interface
-        ])
+        }
 
     def testSaveLoadNoCommonTerms(self):
         """ Ensure backwards compatibility with old versions of Phrases, before common_terms"""
@@ -513,12 +512,12 @@ class CommonTermsPhrasesData:
     unicode_sentences = [[to_unicode(w) for w in sentence] for sentence in sentences]
     common_terms = ['of', 'and', 'for']
 
-    bigram1 = u'lack_of_interest'
-    bigram2 = u'data_and_graph'
-    bigram3 = u'human_interface'
-    expression1 = u'lack of interest'
-    expression2 = u'data and graph'
-    expression3 = u'human interface'
+    bigram1 = 'lack_of_interest'
+    bigram2 = 'data_and_graph'
+    bigram3 = 'human_interface'
+    expression1 = 'lack of interest'
+    expression2 = 'data and graph'
+    expression3 = 'human interface'
 
     def gen_sentences(self):
         return ((w for w in sentence) for sentence in self.sentences)
@@ -529,13 +528,13 @@ class TestPhrasesModelCommonTerms(CommonTermsPhrasesData, TestPhrasesModel):
 
     def testEncoding(self):
         """Test that both utf8 and unicode input work; output must be unicode."""
-        expected = [u'survey', u'of', u'user', u'computer', u'system', u'lack_of_interest']
+        expected = ['survey', 'of', 'user', 'computer', 'system', 'lack_of_interest']
 
         self.assertEqual(self.bigram_utf8[self.sentences[1]], expected)
         self.assertEqual(self.bigram_unicode[self.sentences[1]], expected)
 
         transformed = ' '.join(self.bigram_utf8[self.sentences[1]])
-        self.assertTrue(isinstance(transformed, six.text_type))
+        self.assertTrue(isinstance(transformed, str))
 
     def testMultipleBigramsSingleEntry(self):
         """ a single entry should produce multiple bigrams. """
@@ -545,10 +544,10 @@ class TestPhrasesModelCommonTerms(CommonTermsPhrasesData, TestPhrasesModel):
         test_sentences = [['data', 'and', 'graph', 'survey', 'for', 'human', 'interface']]
         for phrase, score in bigram.export_phrases(test_sentences):
             seen_bigrams.add(phrase)
-        assert seen_bigrams == set([
+        assert seen_bigrams == {
             b'data and graph',
             b'human interface',
-        ])
+        }
 
     def testExportPhrases(self):
         """Test Phrases bigram export_phrases functionality."""
@@ -559,12 +558,12 @@ class TestPhrasesModelCommonTerms(CommonTermsPhrasesData, TestPhrasesModel):
         for phrase, score in bigram.export_phrases(self.sentences):
             seen_bigrams.add(phrase)
 
-        assert seen_bigrams == set([
+        assert seen_bigrams == {
             b'human interface',
             b'graph of trees',
             b'data and graph',
             b'lack of interest',
-        ])
+        }
 
     def testScoringDefault(self):
         """ test the default scoring, from the mikolov word2vec paper """
@@ -585,12 +584,12 @@ class TestPhrasesModelCommonTerms(CommonTermsPhrasesData, TestPhrasesModel):
         interface = float(bigram.vocab[b"interface"])
         human_interface = float(bigram.vocab[b"human_interface"])
 
-        assert seen_scores == set([
+        assert seen_scores == {
             # score for data and graph
             round((data_and_graph - min_count) / data / graph * len_vocab, 3),
             # score for human interface
             round((human_interface - min_count) / human / interface * len_vocab, 3),
-        ])
+        }
 
     def testScoringNpmi(self):
         """ test normalized pointwise mutual information scoring """
@@ -603,10 +602,10 @@ class TestPhrasesModelCommonTerms(CommonTermsPhrasesData, TestPhrasesModel):
         for phrase, score in bigram.export_phrases(test_sentences):
             seen_scores.add(round(score, 3))
 
-        assert seen_scores == set([
+        assert seen_scores == {
             .74,  # score for data and graph
             .894  # score for human interface
-        ])
+        }
 
     def testCustomScorer(self):
         """ test using a custom scoring function """
@@ -636,13 +635,13 @@ class TestPhraserModelCommonTerms(CommonTermsPhrasesData, TestPhraserModel):
 
     def testEncoding(self):
         """Test that both utf8 and unicode input work; output must be unicode."""
-        expected = [u'survey', u'of', u'user', u'computer', u'system', u'lack_of_interest']
+        expected = ['survey', 'of', 'user', 'computer', 'system', 'lack_of_interest']
 
         self.assertEqual(self.bigram_utf8[self.sentences[1]], expected)
         self.assertEqual(self.bigram_unicode[self.sentences[1]], expected)
 
         transformed = ' '.join(self.bigram_utf8[self.sentences[1]])
-        self.assertTrue(isinstance(transformed, six.text_type))
+        self.assertTrue(isinstance(transformed, str))
 
 
 class TestPhraserModelCompatibilty(unittest.TestCase):

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -14,12 +13,10 @@ and implement the missing methods.
 
 """
 
-from __future__ import with_statement
 
 import logging
 
 from gensim import utils, matutils
-from six.moves import range
 
 
 logger = logging.getLogger(__name__)
@@ -96,7 +93,7 @@ class CorpusABC(utils.SaveLoad):
             "corpus.save() stores only the (tiny) iteration object in memory; "
             "to serialize the actual corpus content, use e.g. MmCorpus.serialize(corpus)"
         )
-        super(CorpusABC, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __len__(self):
         """Get the corpus size = the total number of documents in it."""
@@ -174,8 +171,7 @@ class TransformedCorpus(CorpusABC):
         """
         if self.chunksize:
             for chunk in utils.grouper(self.corpus, self.chunksize):
-                for transformed in self.obj.__getitem__(chunk, chunksize=None):
-                    yield transformed
+                yield from self.obj.__getitem__(chunk, chunksize=None)
         else:
             for doc in self.corpus:
                 yield self.obj[doc]
@@ -391,8 +387,7 @@ class SimilarityABC(utils.SaveLoad):
                 # scipy.sparse happy
                 chunk_end = min(self.index.shape[0], chunk_start + self.chunksize)
                 chunk = self.index[chunk_start: chunk_end]
-                for sim in self[chunk]:
-                    yield sim
+                yield from self[chunk]
         else:
             for doc in self.index:
                 yield self[doc]

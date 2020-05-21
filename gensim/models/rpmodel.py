@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -69,7 +68,7 @@ class RpModel(interfaces.TransformationABC):
             self.initialize(corpus)
 
     def __str__(self):
-        return "RpModel(num_terms=%s, num_topics=%s)" % (self.num_terms, self.num_topics)
+        return "RpModel(num_terms={}, num_topics={})".format(self.num_terms, self.num_topics)
 
     def initialize(self, corpus):
         """Initialize the random projection matrix.

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2014 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -227,7 +226,7 @@ class LdaMallet(utils.SaveLoad, basemodel.BaseTopicModel):
                 tokens = chain.from_iterable([self.id2word[tokenid]] * int(cnt) for tokenid, cnt in doc)
             else:
                 tokens = chain.from_iterable([str(tokenid)] * int(cnt) for tokenid, cnt in doc)
-            file_like.write(utils.to_utf8("%s 0 %s\n" % (docno, ' '.join(tokens))))
+            file_like.write(utils.to_utf8("{} 0 {}\n".format(docno, ' '.join(tokens))))
 
     def convert_input(self, corpus, infer=False, serialize_corpus=True):
         """Convert corpus to Mallet format and save it to a temporary text file.
@@ -466,7 +465,7 @@ class LdaMallet(utils.SaveLoad, basemodel.BaseTopicModel):
         """
         try:
             archive = zipfile.ZipFile(direc_path, 'r')
-            if u'cc/mallet/regression/' not in archive.namelist():
+            if 'cc/mallet/regression/' not in archive.namelist():
                 return '2.0.7'
             else:
                 return '2.0.8RC3'
@@ -572,7 +571,7 @@ class LdaMallet(utils.SaveLoad, basemodel.BaseTopicModel):
         """Load a previously saved LdaMallet class. Handles backwards compatibility from
         older LdaMallet versions which did not use random_seed parameter.
         """
-        model = super(LdaMallet, cls).load(*args, **kwargs)
+        model = super().load(*args, **kwargs)
         if not hasattr(model, 'random_seed'):
             model.random_seed = 0
 

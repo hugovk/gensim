@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Shiva Manne <manneshiva@gmail.com>
 # Copyright (C) 2018 RaRe Technologies s.r.o.
@@ -36,7 +35,6 @@ from gensim import utils
 import logging
 from timeit import default_timer
 import threading
-from six.moves import range
 from six import itervalues, string_types
 from gensim import matutils
 from numpy import float32 as REAL, ones, random, dtype
@@ -599,7 +597,7 @@ class BaseAny2VecModel(utils.SaveLoad):
             When methods are called on an instance (should be called on a class, this is a class method).
 
         """
-        return super(BaseAny2VecModel, cls).load(fname_or_handle, **kwargs)
+        return super().load(fname_or_handle, **kwargs)
 
     def save(self, fname_or_handle, **kwargs):
         """"Save the object to file.
@@ -617,7 +615,7 @@ class BaseAny2VecModel(utils.SaveLoad):
             Method for load model after current method.
 
         """
-        super(BaseAny2VecModel, self).save(fname_or_handle, **kwargs)
+        super().save(fname_or_handle, **kwargs)
 
 
 class BaseWordEmbeddingsModel(BaseAny2VecModel):
@@ -732,12 +730,12 @@ class BaseWordEmbeddingsModel(BaseAny2VecModel):
         self.corpus_count = 0
         self.corpus_total_words = 0
 
-        super(BaseWordEmbeddingsModel, self).__init__(
+        super().__init__(
             workers=workers, vector_size=vector_size, epochs=epochs, callbacks=callbacks, batch_words=batch_words)
 
         if sentences is not None or corpus_file is not None:
             self._check_input_data_sanity(data_iterable=sentences, corpus_file=corpus_file)
-            if corpus_file is not None and not isinstance(corpus_file, string_types):
+            if corpus_file is not None and not isinstance(corpus_file, str):
                 raise TypeError("You must pass string as the corpus_file argument.")
             elif isinstance(sentences, GeneratorType):
                 raise TypeError("You can't pass a generator as the sentences argument. Try a sequence.")
@@ -875,7 +873,7 @@ class BaseWordEmbeddingsModel(BaseAny2VecModel):
             features and starting learning rate used by the object.
 
         """
-        return "%s(vocab=%s, size=%s, alpha=%s)" % (
+        return "{}(vocab={}, size={}, alpha={})".format(
             self.__class__.__name__, len(self.wv.index2word), self.vector_size, self.alpha
         )
 
@@ -963,7 +961,7 @@ class BaseWordEmbeddingsModel(BaseAny2VecModel):
         raw_vocab = word_freq
         logger.info(
             "collected %i different raw word, with total frequency of %i",
-            len(raw_vocab), sum(itervalues(raw_vocab))
+            len(raw_vocab), sum(raw_vocab.values())
         )
 
         # Since no sentences are provided, this is to control the corpus_count.
@@ -1060,7 +1058,7 @@ class BaseWordEmbeddingsModel(BaseAny2VecModel):
         self.min_alpha = end_alpha or self.min_alpha
         self.compute_loss = compute_loss
         self.running_training_loss = 0.0
-        return super(BaseWordEmbeddingsModel, self).train(
+        return super().train(
             data_iterable=sentences, corpus_file=corpus_file, total_examples=total_examples,
             total_words=total_words, epochs=epochs, start_alpha=start_alpha, end_alpha=end_alpha, word_count=word_count,
             queue_factor=queue_factor, report_delay=report_delay, compute_loss=compute_loss, callbacks=callbacks,
@@ -1227,7 +1225,7 @@ class BaseWordEmbeddingsModel(BaseAny2VecModel):
             When methods are called on instance (should be called from class).
 
         """
-        model = super(BaseWordEmbeddingsModel, cls).load(*args, **kwargs)
+        model = super().load(*args, **kwargs)
         if not hasattr(model, 'ns_exponent'):
             model.ns_exponent = 0.75
         if not hasattr(model.vocabulary, 'ns_exponent'):

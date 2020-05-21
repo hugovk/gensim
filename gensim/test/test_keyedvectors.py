@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Jayant Jain <jayantjain1992@gmail.com>
 # Copyright (C) 2017 Radim Rehurek <me@radimrehurek.com>
@@ -12,7 +11,7 @@ Automated tests for checking the poincare module from the models package.
 import logging
 import unittest
 
-from mock import patch
+from unittest.mock import patch
 import numpy as np
 
 from gensim.corpora import Dictionary
@@ -35,38 +34,38 @@ class TestWordEmbeddingSimilarityIndex(unittest.TestCase):
 
         # check the handling of out-of-dictionary terms
         index = WordEmbeddingSimilarityIndex(self.vectors)
-        self.assertLess(0, len(list(index.most_similar(u"holiday", topn=10))))
-        self.assertEqual(0, len(list(index.most_similar(u"out-of-dictionary term", topn=10))))
+        self.assertLess(0, len(list(index.most_similar("holiday", topn=10))))
+        self.assertEqual(0, len(list(index.most_similar("out-of-dictionary term", topn=10))))
 
         # check that the topn works as expected
         index = WordEmbeddingSimilarityIndex(self.vectors)
-        results = list(index.most_similar(u"holiday", topn=10))
+        results = list(index.most_similar("holiday", topn=10))
         self.assertLess(0, len(results))
         self.assertGreaterEqual(10, len(results))
-        results = list(index.most_similar(u"holiday", topn=20))
+        results = list(index.most_similar("holiday", topn=20))
         self.assertLess(10, len(results))
         self.assertGreaterEqual(20, len(results))
 
         # check that the term itself is not returned
         index = WordEmbeddingSimilarityIndex(self.vectors)
-        terms = [term for term, similarity in index.most_similar(u"holiday", topn=len(self.vectors.vocab))]
-        self.assertFalse(u"holiday" in terms)
+        terms = [term for term, similarity in index.most_similar("holiday", topn=len(self.vectors.vocab))]
+        self.assertFalse("holiday" in terms)
 
         # check that the threshold works as expected
         index = WordEmbeddingSimilarityIndex(self.vectors, threshold=0.0)
-        results = list(index.most_similar(u"holiday", topn=10))
+        results = list(index.most_similar("holiday", topn=10))
         self.assertLess(0, len(results))
         self.assertGreaterEqual(10, len(results))
 
         index = WordEmbeddingSimilarityIndex(self.vectors, threshold=1.0)
-        results = list(index.most_similar(u"holiday", topn=10))
+        results = list(index.most_similar("holiday", topn=10))
         self.assertEqual(0, len(results))
 
         # check that the exponent works as expected
         index = WordEmbeddingSimilarityIndex(self.vectors, exponent=1.0)
-        first_similarities = np.array([similarity for term, similarity in index.most_similar(u"holiday", topn=10)])
+        first_similarities = np.array([similarity for term, similarity in index.most_similar("holiday", topn=10)])
         index = WordEmbeddingSimilarityIndex(self.vectors, exponent=2.0)
-        second_similarities = np.array([similarity for term, similarity in index.most_similar(u"holiday", topn=10)])
+        second_similarities = np.array([similarity for term, similarity in index.most_similar("holiday", topn=10)])
         self.assertTrue(np.allclose(first_similarities ** 2.0, second_similarities))
 
 
@@ -78,7 +77,7 @@ class TestKeyedVectors(unittest.TestCase):
     def test_similarity_matrix(self):
         """Test similarity_matrix returns expected results."""
 
-        documents = [[u"government", u"denied", u"holiday"], [u"holiday", u"slowing", u"hollingworth"]]
+        documents = [["government", "denied", "holiday"], ["holiday", "slowing", "hollingworth"]]
         dictionary = Dictionary(documents)
         similarity_matrix = self.vectors.similarity_matrix(dictionary).todense()
 
@@ -143,7 +142,7 @@ class TestKeyedVectors(unittest.TestCase):
     def test_most_similar_restrict_vocab(self):
         """Test most_similar returns handles restrict_vocab correctly."""
         expected = set(self.vectors.index2word[:5])
-        predicted = set(result[0] for result in self.vectors.most_similar('war', topn=5, restrict_vocab=5))
+        predicted = {result[0] for result in self.vectors.most_similar('war', topn=5, restrict_vocab=5)}
         self.assertEqual(expected, predicted)
 
     def test_most_similar_with_vector_input(self):
@@ -202,7 +201,7 @@ class TestKeyedVectors(unittest.TestCase):
     def test_words_closer_than(self):
         """Test words_closer_than returns expected value for distinct and identical nodes."""
         self.assertEqual(self.vectors.words_closer_than('war', 'war'), [])
-        expected = set(['conflict', 'administration'])
+        expected = {'conflict', 'administration'}
         self.assertEqual(set(self.vectors.words_closer_than('war', 'terrorism')), expected)
 
     def test_rank(self):
@@ -385,28 +384,28 @@ class Word2VecKeyedVectorsTest(unittest.TestCase):
         """Test loading model and vocab files which have decoding errors: replace mode"""
         model = gensim.models.KeyedVectors.load_word2vec_format(
             self.model_path, fvocab=self.vocab_path, binary=False, unicode_errors="replace")
-        self.assertEqual(model.vocab[u'ありがとう�'].count, 123)
-        self.assertEqual(model.vocab[u'どういたしまして�'].count, 789)
-        self.assertEqual(model.vocab[u'ありがとう�'].index, 0)
-        self.assertEqual(model.vocab[u'どういたしまして�'].index, 1)
+        self.assertEqual(model.vocab['ありがとう�'].count, 123)
+        self.assertEqual(model.vocab['どういたしまして�'].count, 789)
+        self.assertEqual(model.vocab['ありがとう�'].index, 0)
+        self.assertEqual(model.vocab['どういたしまして�'].index, 1)
         self.assertTrue(np.array_equal(
-            model.get_vector(u'ありがとう�'), np.array([.6, .6, .6], dtype=np.float32)))
+            model.get_vector('ありがとう�'), np.array([.6, .6, .6], dtype=np.float32)))
         self.assertTrue(np.array_equal(
-            model.get_vector(u'どういたしまして�'), np.array([.1, .2, .3], dtype=np.float32)))
+            model.get_vector('どういたしまして�'), np.array([.1, .2, .3], dtype=np.float32)))
 
     def test_load_model_and_vocab_file_ignore(self):
         """Test loading model and vocab files which have decoding errors: ignore mode"""
         model = gensim.models.KeyedVectors.load_word2vec_format(
             self.model_path, fvocab=self.vocab_path, binary=False, unicode_errors="ignore")
         print(model.vocab.keys())
-        self.assertEqual(model.vocab[u'ありがとう'].count, 123)
-        self.assertEqual(model.vocab[u'どういたしまして'].count, 789)
-        self.assertEqual(model.vocab[u'ありがとう'].index, 0)
-        self.assertEqual(model.vocab[u'どういたしまして'].index, 1)
+        self.assertEqual(model.vocab['ありがとう'].count, 123)
+        self.assertEqual(model.vocab['どういたしまして'].count, 789)
+        self.assertEqual(model.vocab['ありがとう'].index, 0)
+        self.assertEqual(model.vocab['どういたしまして'].index, 1)
         self.assertTrue(np.array_equal(
-            model.get_vector(u'ありがとう'), np.array([.6, .6, .6], dtype=np.float32)))
+            model.get_vector('ありがとう'), np.array([.6, .6, .6], dtype=np.float32)))
         self.assertTrue(np.array_equal(
-            model.get_vector(u'どういたしまして'), np.array([.1, .2, .3], dtype=np.float32)))
+            model.get_vector('どういたしまして'), np.array([.1, .2, .3], dtype=np.float32)))
 
 
 try:

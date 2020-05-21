@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2016 Radim Rehurek <me@radimrehurek.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -72,7 +71,6 @@ And on analogies:
 and so on.
 
 """
-from __future__ import division  # py3 "true division"
 
 import logging
 
@@ -98,14 +96,13 @@ import numpy as np
 from gensim import utils, matutils  # utility fnc for pickling, common scipy operations etc
 from gensim.corpora.dictionary import Dictionary
 from six import string_types, iteritems
-from six.moves import range
 from scipy import stats
 
 
 logger = logging.getLogger(__name__)
 
 
-class Vocab(object):
+class Vocab:
     """
     A single vocabulary item, used internally for collecting per-word frequency/sampling info,
     and for constructing binary trees (incl. both word leaves and inner nodes).
@@ -120,8 +117,8 @@ class Vocab(object):
         return self.count < other.count
 
     def __str__(self):
-        vals = ['%s:%r' % (key, self.__dict__[key]) for key in sorted(self.__dict__) if not key.startswith('_')]
-        return "%s(%s)" % (self.__class__.__name__, ', '.join(vals))
+        vals = ['{}:{!r}'.format(key, self.__dict__[key]) for key in sorted(self.__dict__) if not key.startswith('_')]
+        return "{}({})".format(self.__class__.__name__, ', '.join(vals))
 
 
 class KeyedVectorsBase(utils.SaveLoad):
@@ -155,19 +152,19 @@ class KeyedVectorsBase(utils.SaveLoad):
         if fvocab is not None:
             logger.info("storing vocabulary in %s", fvocab)
             with utils.open(fvocab, 'wb') as vout:
-                for word, vocab in sorted(iteritems(self.vocab), key=lambda item: -item[1].count):
-                    vout.write(utils.to_utf8("%s %s\n" % (word, vocab.count)))
+                for word, vocab in sorted(self.vocab.items(), key=lambda item: -item[1].count):
+                    vout.write(utils.to_utf8("{} {}\n".format(word, vocab.count)))
         logger.info("storing %sx%s projection weights into %s", total_vec, vector_size, fname)
         assert (len(self.vocab), vector_size) == self.syn0.shape
         with utils.open(fname, 'wb') as fout:
-            fout.write(utils.to_utf8("%s %s\n" % (total_vec, vector_size)))
+            fout.write(utils.to_utf8("{} {}\n".format(total_vec, vector_size)))
             # store in sorted order: most frequent words at the top
-            for word, vocab in sorted(iteritems(self.vocab), key=lambda item: -item[1].count):
+            for word, vocab in sorted(self.vocab.items(), key=lambda item: -item[1].count):
                 row = self.syn0[vocab.index]
                 if binary:
                     fout.write(utils.to_utf8(word) + b" " + row.tostring())
                 else:
-                    fout.write(utils.to_utf8("%s %s\n" % (word, ' '.join("%f" % val for val in row))))
+                    fout.write(utils.to_utf8("{} {}\n".format(word, ' '.join("%f" % val for val in row))))
 
     @classmethod
     def load_word2vec_format(cls, fname, fvocab=None, binary=False, encoding='utf8', unicode_errors='strict',
@@ -343,7 +340,7 @@ class KeyedVectorsBase(utils.SaveLoad):
                    ...)
 
         """
-        if isinstance(words, string_types):
+        if isinstance(words, str):
             # allow calls like trained_model['office'], as a shorthand for trained_model[['office']]
             return self.word_vec(words)
 
@@ -444,7 +441,7 @@ class EuclideanKeyedVectors(KeyedVectorsBase):
     """
 
     def __init__(self):
-        super(EuclideanKeyedVectors, self).__init__()
+        super().__init__()
         self.syn0norm = None
 
     @property
@@ -454,7 +451,7 @@ class EuclideanKeyedVectors(KeyedVectorsBase):
     def save(self, *args, **kwargs):
         # don't bother storing the cached normalized vectors
         kwargs['ignore'] = kwargs.get('ignore', ['syn0norm'])
-        super(EuclideanKeyedVectors, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def word_vec(self, word, use_norm=False):
         """
@@ -514,17 +511,17 @@ class EuclideanKeyedVectors(KeyedVectorsBase):
 
         self.init_sims()
 
-        if isinstance(positive, string_types) and not negative:
+        if isinstance(positive, str) and not negative:
             # allow calls like most_similar('dog'), as a shorthand for most_similar(['dog'])
             positive = [positive]
 
         # add weights for each word, if not already present; default to 1.0 for positive and -1.0 for negative words
         positive = [
-            (word, 1.0) if isinstance(word, string_types + (ndarray,)) else word
+            (word, 1.0) if isinstance(word, (str,) + (ndarray,)) else word
             for word in positive
         ]
         negative = [
-            (word, -1.0) if isinstance(word, string_types + (ndarray,)) else word
+            (word, -1.0) if isinstance(word, (str,) + (ndarray,)) else word
             for word in negative
         ]
 
@@ -719,7 +716,7 @@ class EuclideanKeyedVectors(KeyedVectorsBase):
 
         self.init_sims()
 
-        if isinstance(positive, string_types) and not negative:
+        if isinstance(positive, str) and not negative:
             # allow calls like most_similar_cosmul('dog'), as a shorthand for most_similar_cosmul(['dog'])
             positive = [positive]
 
@@ -729,11 +726,11 @@ class EuclideanKeyedVectors(KeyedVectorsBase):
             }
 
         positive = [
-            self.word_vec(word, use_norm=True) if isinstance(word, string_types) else word
+            self.word_vec(word, use_norm=True) if isinstance(word, str) else word
             for word in positive
         ]
         negative = [
-            self.word_vec(word, use_norm=True) if isinstance(word, string_types) else word
+            self.word_vec(word, use_norm=True) if isinstance(word, str) else word
             for word in negative
         ]
 
@@ -828,7 +825,7 @@ class EuclideanKeyedVectors(KeyedVectorsBase):
         Raises KeyError if either `word_or_vector` or any word in `other_words` is absent from vocab.
 
         """
-        if isinstance(word_or_vector, string_types):
+        if isinstance(word_or_vector, str):
             input_vector = self.word_vec(word_or_vector)
         else:
             input_vector = word_or_vector

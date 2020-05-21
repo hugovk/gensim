@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -155,7 +154,7 @@ class PhrasesTransformer(TransformerMixin, BaseEstimator):
             self.phraser = Phraser(self.gensim_model)
 
         # input as python lists
-        if isinstance(docs[0], string_types):
+        if isinstance(docs[0], str):
             docs = [docs]
 
         return [self.phraser[doc] for doc in docs]

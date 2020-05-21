@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Jayant Jain <jayantjain1992@gmail.com>
 # Copyright (C) 2017 Radim Rehurek <me@radimrehurek.com>
@@ -53,7 +52,6 @@ from collections import defaultdict, Counter
 from numpy import random as np_random
 from scipy.stats import spearmanr
 from six import string_types
-from six.moves import zip, range
 
 from gensim import utils, matutils
 from gensim.models.keyedvectors import Vocab, BaseKeyedVectors
@@ -408,7 +406,7 @@ class PoincareModel(utils.SaveLoad):
         self._loss_grad = None  # Can't pickle autograd fn to disk
         attrs_to_ignore = ['_node_probabilities', '_node_counts_cumsum']
         kwargs['ignore'] = set(list(kwargs.get('ignore', [])) + attrs_to_ignore)
-        super(PoincareModel, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @classmethod
     def load(cls, *args, **kwargs):
@@ -431,7 +429,7 @@ class PoincareModel(utils.SaveLoad):
             The loaded model.
 
         """
-        model = super(PoincareModel, cls).load(*args, **kwargs)
+        model = super().load(*args, **kwargs)
         model._init_node_probabilities()
         return model
 
@@ -705,7 +703,7 @@ class PoincareModel(utils.SaveLoad):
                     avg_loss = 0.0
 
 
-class PoincareBatch(object):
+class PoincareBatch:
     """Compute Poincare distances, gradients and loss for a training batch.
 
     Store intermediate state to avoid recomputing multiple times.
@@ -867,7 +865,7 @@ class PoincareKeyedVectors(BaseKeyedVectors):
 
     """
     def __init__(self, vector_size):
-        super(PoincareKeyedVectors, self).__init__(vector_size)
+        super().__init__(vector_size)
         self.max_distance = 0
         self.index2word = []
         self.vocab = {}
@@ -906,7 +904,7 @@ class PoincareKeyedVectors(BaseKeyedVectors):
             >>> wv = model.kv.word_vec('kangaroo.n.01')
 
         """
-        return super(PoincareKeyedVectors, self).get_vector(word)
+        return super().get_vector(word)
 
     def words_closer_than(self, w1, w2):
         """Get all words that are closer to `w1` than `w2` is to `w1`.
@@ -939,7 +937,7 @@ class PoincareKeyedVectors(BaseKeyedVectors):
             [u'marsupial.n.01', u'phalanger.n.01']
 
         """
-        return super(PoincareKeyedVectors, self).closer_than(w1, w2)
+        return super().closer_than(w1, w2)
 
     def save_word2vec_format(self, fname, fvocab=None, binary=False, total_vec=None):
         """Store the input-hidden weight matrix in the same format used by the original
@@ -1270,7 +1268,7 @@ class PoincareKeyedVectors(BaseKeyedVectors):
             nodes_to_use = self.index2word[:restrict_vocab]
             all_distances = self.distances(node_or_vector, nodes_to_use)
 
-        if isinstance(node_or_vector, string_types + (int,)):
+        if isinstance(node_or_vector, (str,) + (int,)):
             node_index = self.vocab[node_or_vector].index
         else:
             node_index = None
@@ -1328,7 +1326,7 @@ class PoincareKeyedVectors(BaseKeyedVectors):
             If either `node_or_vector` or any node in `other_nodes` is absent from vocab.
 
         """
-        if isinstance(node_or_vector, string_types):
+        if isinstance(node_or_vector, str):
             input_vector = self.word_vec(node_or_vector)
         else:
             input_vector = node_or_vector
@@ -1373,7 +1371,7 @@ class PoincareKeyedVectors(BaseKeyedVectors):
         The position in hierarchy is based on the norm of the vector for the node.
 
         """
-        if isinstance(node_or_vector, string_types):
+        if isinstance(node_or_vector, str):
             input_vector = self.word_vec(node_or_vector)
         else:
             input_vector = node_or_vector
@@ -1421,7 +1419,7 @@ class PoincareKeyedVectors(BaseKeyedVectors):
         return self.norm(node_or_vector_2) - self.norm(node_or_vector_1)
 
 
-class PoincareRelations(object):
+class PoincareRelations:
     """Stream relations for `PoincareModel` from a tsv-like file."""
 
     def __init__(self, file_path, encoding='utf8', delimiter='\t'):
@@ -1470,7 +1468,7 @@ class PoincareRelations(object):
                 yield tuple(row)
 
 
-class NegativesBuffer(object):
+class NegativesBuffer:
     """Buffer and return negative samples."""
 
     def __init__(self, items):
@@ -1521,7 +1519,7 @@ class NegativesBuffer(object):
         return self._items[start_index:end_index]
 
 
-class ReconstructionEvaluation(object):
+class ReconstructionEvaluation:
     """Evaluate reconstruction on given network for given embedding."""
 
     def __init__(self, file_path, embedding):
@@ -1625,7 +1623,7 @@ class ReconstructionEvaluation(object):
         return np.mean(ranks), np.mean(avg_precision_scores)
 
 
-class LinkPredictionEvaluation(object):
+class LinkPredictionEvaluation:
     """Evaluate reconstruction on given network for given embedding."""
 
     def __init__(self, train_path, test_path, embedding):
@@ -1737,7 +1735,7 @@ class LinkPredictionEvaluation(object):
         return np.mean(ranks), np.mean(avg_precision_scores)
 
 
-class LexicalEntailmentEvaluation(object):
+class LexicalEntailmentEvaluation:
     """Evaluate reconstruction on given network for any embedding."""
 
     def __init__(self, filepath):
@@ -1782,7 +1780,7 @@ class LexicalEntailmentEvaluation(object):
             word_1_terms = self.find_matching_terms(trie, term_1)
             word_2_terms = self.find_matching_terms(trie, term_2)
         except KeyError:
-            raise ValueError("No matching terms found for either %s or %s" % (term_1, term_2))
+            raise ValueError("No matching terms found for either {} or {}".format(term_1, term_2))
         min_distance = np.inf
         min_term_1, min_term_2 = None, None
         for term_1 in word_1_terms:

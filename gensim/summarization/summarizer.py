@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -61,7 +60,6 @@ from gensim.summarization.commons import remove_unreachable_nodes as _remove_unr
 from gensim.summarization.bm25 import iter_bm25_bow as _bm25_weights
 from gensim.corpora import Dictionary
 from math import log10 as _log10
-from six.moves import range
 
 
 INPUT_MIN_LENGTH = 10
@@ -421,7 +419,7 @@ def summarize(text, ratio=0.2, word_count=None, split=False):
     # If no sentence could be identified, the function ends.
     if len(sentences) == 0:
         logger.warning("Input text is empty.")
-        return [] if split else u""
+        return [] if split else ""
 
     # If only one sentence is present, the function raises an error (Avoids ZeroDivisionError).
     if len(sentences) == 1:
@@ -438,7 +436,7 @@ def summarize(text, ratio=0.2, word_count=None, split=False):
     # If couldn't get important docs, the algorithm ends.
     if not most_important_docs:
         logger.warning("Couldn't get relevant sentences.")
-        return [] if split else u""
+        return [] if split else ""
 
     # Extracts the most important sentences with the selected criterion.
     extracted_sentences = _extract_important_sentences(sentences, corpus, most_important_docs, word_count)

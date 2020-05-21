@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Jayant Jain <jayantjain1992@gmail.com>
 # Copyright (C) 2017 Radim Rehurek <me@radimrehurek.com>

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Radim Rehurek <me@radimrehurek.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -14,7 +13,6 @@ Class containing the old SaveLoad class with modeified `unpickle` function is su
 an older gensim version.
 
 """
-from __future__ import with_statement
 
 import logging
 
@@ -43,7 +41,7 @@ PAT_ALPHABETIC = re.compile(r'(((?![\d])\w)+)', re.UNICODE)
 RE_HTML_ENTITY = re.compile(r'&(#?)([xX]?)(\w{1,8});', re.UNICODE)
 
 
-class SaveLoad(object):
+class SaveLoad:
     """Class which inherit from this class have save/load functions, which un/pickle them to disk.
 
     Warnings
@@ -108,7 +106,7 @@ class SaveLoad(object):
         """
         def mmap_error(obj, filename):
             return IOError(
-                'Cannot mmap compressed object %s in file %s. ' % (obj, filename)
+                'Cannot mmap compressed object {} in file {}. '.format(obj, filename)
                 + 'Use `load(fname, mmap=None)` or uncompress files manually.'
             )
 
@@ -213,7 +211,7 @@ class SaveLoad(object):
         finally:
             # restore attribs handled specially
             for obj, asides in restores:
-                for attrib, val in iteritems(asides):
+                for attrib, val in asides.items():
                     setattr(obj, attrib, val)
         logger.info("saved %s", fname)
 
@@ -249,7 +247,7 @@ class SaveLoad(object):
         sparse_matrices = (scipy.sparse.csr_matrix, scipy.sparse.csc_matrix)
         if separately is None:
             separately = []
-            for attrib, val in iteritems(self.__dict__):
+            for attrib, val in self.__dict__.items():
                 if isinstance(val, np.ndarray) and val.size >= sep_limit:
                     separately.append(attrib)
                 elif isinstance(val, sparse_matrices) and val.nnz >= sep_limit:
@@ -263,7 +261,7 @@ class SaveLoad(object):
 
         recursive_saveloads = []
         restores = []
-        for attrib, val in iteritems(self.__dict__):
+        for attrib, val in self.__dict__.items():
             if hasattr(val, '_save_specials'):  # better than 'isinstance(val, SaveLoad)' if IPython reloading
                 recursive_saveloads.append(attrib)
                 cfname = '.'.join((fname, attrib))
@@ -271,7 +269,7 @@ class SaveLoad(object):
 
         try:
             numpys, scipys, ignoreds = [], [], []
-            for attrib, val in iteritems(asides):
+            for attrib, val in asides.items():
                 if isinstance(val, np.ndarray) and attrib not in ignore:
                     numpys.append(attrib)
                     logger.info("storing np array '%s' to %s", attrib, subname(fname, attrib))
@@ -315,7 +313,7 @@ class SaveLoad(object):
             self.__dict__['__recursive_saveloads'] = recursive_saveloads
         except Exception:
             # restore the attributes if exception-interrupted
-            for attrib, val in iteritems(asides):
+            for attrib, val in asides.items():
                 setattr(self, attrib, val)
             raise
         return restores + [(self, asides)]
@@ -375,10 +373,7 @@ def unpickle(fname):
         file_bytes = file_bytes.replace(b'gensim.models.fasttext', b'gensim.models.deprecated.fasttext')
         file_bytes = file_bytes.replace(
             b'gensim.models.wrappers.fasttext', b'gensim.models.deprecated.fasttext_wrapper')
-        if sys.version_info > (3, 0):
-            return _pickle.loads(file_bytes, encoding='latin1')
-        else:
-            return _pickle.loads(file_bytes)
+        return _pickle.loads(file_bytes, encoding='latin1')
 
 
 def pickle(obj, fname, protocol=2):

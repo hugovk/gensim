@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Radim Rehurek <me@radimrehurek.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -81,7 +80,6 @@ from gensim.models.doc2vec import Doc2Vec as NewDoc2Vec
 from gensim.models.deprecated.old_saveload import SaveLoad
 
 from gensim import matutils  # utility fnc for pickling, common scipy operations etc
-from six.moves import zip, range
 from six import string_types, integer_types
 
 logger = logging.getLogger(__name__)
@@ -349,7 +347,7 @@ class TaggedDocument(namedtuple('TaggedDocument', 'words tags')):
     """
 
     def __str__(self):
-        return '%s(%s, %s)' % (self.__class__.__name__, self.words, self.tags)
+        return '{}({}, {})'.format(self.__class__.__name__, self.words, self.tags)
 
 
 # for compatibility
@@ -395,7 +393,7 @@ class DocvecsArray(SaveLoad):
 
     def note_doctag(self, key, document_no, document_length):
         """Note a document tag during initial corpus scan, for structure sizing."""
-        if isinstance(key, integer_types + (integer,)):
+        if isinstance(key, (int,) + (integer,)):
             self.max_rawint = max(self.max_rawint, key)
         else:
             if key in self.doctags:
@@ -417,7 +415,7 @@ class DocvecsArray(SaveLoad):
 
     def _int_index(self, index):
         """Return int index for either string or int index"""
-        if isinstance(index, integer_types + (integer,)):
+        if isinstance(index, (int,) + (integer,)):
             return index
         else:
             return self.max_rawint + 1 + self.doctags[index].offset
@@ -445,7 +443,7 @@ class DocvecsArray(SaveLoad):
         If a list, return designated tags' vector representations as a
         2D numpy array: #tags x #vector_size.
         """
-        if isinstance(index, string_types + integer_types + (integer,)):
+        if isinstance(index, (str,) + (int,) + (integer,)):
             return self.doctag_syn0[self._int_index(index)]
 
         return vstack([self[i] for i in index])
@@ -454,7 +452,7 @@ class DocvecsArray(SaveLoad):
         return self.count
 
     def __contains__(self, index):
-        if isinstance(index, integer_types + (integer,)):
+        if isinstance(index, (int,) + (integer,)):
             return index < self.count
         else:
             return index in self.doctags
@@ -462,7 +460,7 @@ class DocvecsArray(SaveLoad):
     def save(self, *args, **kwargs):
         # don't bother storing the cached normalized vectors
         kwargs['ignore'] = kwargs.get('ignore', ['syn0norm'])
-        super(DocvecsArray, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def borrow_from(self, other_docvecs):
         self.count = other_docvecs.count
@@ -544,17 +542,17 @@ class DocvecsArray(SaveLoad):
         self.init_sims()
         clip_end = clip_end or len(self.doctag_syn0norm)
 
-        if isinstance(positive, string_types + integer_types + (integer,)) and not negative:
+        if isinstance(positive, (str,) + (int,) + (integer,)) and not negative:
             # allow calls like most_similar('dog'), as a shorthand for most_similar(['dog'])
             positive = [positive]
 
         # add weights for each doc, if not already present; default to 1.0 for positive and -1.0 for negative docs
         positive = [
-            (doc, 1.0) if isinstance(doc, string_types + integer_types + (ndarray, integer))
+            (doc, 1.0) if isinstance(doc, (str,) + (int,) + (ndarray, integer))
             else doc for doc in positive
         ]
         negative = [
-            (doc, -1.0) if isinstance(doc, string_types + integer_types + (ndarray, integer))
+            (doc, -1.0) if isinstance(doc, (str,) + (int,) + (ndarray, integer))
             else doc for doc in negative
         ]
 
@@ -731,7 +729,7 @@ class Doc2Vec(Word2Vec):
                 "use 'documents' instead."
             )
 
-        super(Doc2Vec, self).__init__(
+        super().__init__(
             sg=(1 + dm) % 2,
             null_word=dm_concat,
             **kwargs)
@@ -762,7 +760,7 @@ class Doc2Vec(Word2Vec):
         return self.sg  # same as SG
 
     def clear_sims(self):
-        super(Doc2Vec, self).clear_sims()
+        super().clear_sims()
         self.docvecs.clear_sims()
 
     def reset_weights(self):
@@ -770,13 +768,13 @@ class Doc2Vec(Word2Vec):
             # expand l1 size to match concatenated tags+words length
             self.layer1_size = (self.dm_tag_count + (2 * self.window)) * self.vector_size
             logger.info("using concatenative %d-dimensional layer1", self.layer1_size)
-        super(Doc2Vec, self).reset_weights()
+        super().reset_weights()
         self.docvecs.reset_weights(self)
 
     def reset_from(self, other_model):
         """Reuse shareable structures from other_model."""
         self.docvecs.borrow_from(other_model.docvecs)
-        super(Doc2Vec, self).reset_from(other_model)
+        super().reset_from(other_model)
 
     def scan_vocab(self, documents, progress_per=10000, trim_rule=None, update=False):
         logger.info("collecting all words and their counts")
@@ -789,7 +787,7 @@ class Doc2Vec(Word2Vec):
         vocab = defaultdict(int)
         for document_no, document in enumerate(documents):
             if not checked_string_types:
-                if isinstance(document.words, string_types):
+                if isinstance(document.words, str):
                     logger.warning(
                         "Each 'words' should be a list of words (usually unicode strings). "
                         "First 'words' here is instead plain %s.",
@@ -892,7 +890,7 @@ class Doc2Vec(Word2Vec):
         report = report or {}
         report['doctag_lookup'] = self.docvecs.estimated_lookup_memory()
         report['doctag_syn0'] = self.docvecs.count * self.vector_size * dtype(REAL).itemsize
-        return super(Doc2Vec, self).estimate_memory(vocab_size, report=report)
+        return super().estimate_memory(vocab_size, report=report)
 
     def __str__(self):
         """Abbreviated name reflecting major configuration paramaters."""
@@ -926,7 +924,7 @@ class Doc2Vec(Word2Vec):
             segments.append('s%g' % self.sample)
         if self.workers > 1:
             segments.append('t%d' % self.workers)
-        return '%s(%s)' % (self.__class__.__name__, ','.join(segments))
+        return '{}({})'.format(self.__class__.__name__, ','.join(segments))
 
     def delete_temporary_training_data(self, keep_doctags_vectors=True, keep_inference=True):
         """
@@ -969,18 +967,18 @@ class Doc2Vec(Word2Vec):
                 if not word_vec:
                     total_vec = len(self.docvecs)
                     logger.info("storing %sx%s projection weights into %s", total_vec, self.vector_size, fname)
-                    fout.write(utils.to_utf8("%s %s\n" % (total_vec, self.vector_size)))
+                    fout.write(utils.to_utf8("{} {}\n".format(total_vec, self.vector_size)))
                 # store as in input order
                 for i in range(len(self.docvecs)):
-                    doctag = u"%s%s" % (prefix, self.docvecs.index_to_doctag(i))
+                    doctag = "{}{}".format(prefix, self.docvecs.index_to_doctag(i))
                     row = self.docvecs.doctag_syn0[i]
                     if binary:
                         fout.write(utils.to_utf8(doctag) + b" " + row.tostring())
                     else:
-                        fout.write(utils.to_utf8("%s %s\n" % (doctag, ' '.join("%f" % val for val in row))))
+                        fout.write(utils.to_utf8("{} {}\n".format(doctag, ' '.join("%f" % val for val in row))))
 
 
-class TaggedBrownCorpus(object):
+class TaggedBrownCorpus:
     """Iterate over documents from the Brown corpus (part of NLTK data), yielding
     each document out as a TaggedDocument object."""
 
@@ -999,13 +997,13 @@ class TaggedBrownCorpus(object):
                     # each token is WORD/POS_TAG
                     token_tags = [t.split('/') for t in line.split() if len(t.split('/')) == 2]
                     # ignore words with non-alphabetic tags like ",", "!" etc (punctuation, weird stuff)
-                    words = ["%s/%s" % (token.lower(), tag[:2]) for token, tag in token_tags if tag[:2].isalpha()]
+                    words = ["{}/{}".format(token.lower(), tag[:2]) for token, tag in token_tags if tag[:2].isalpha()]
                     if not words:  # don't bother sending out empty documents
                         continue
-                    yield TaggedDocument(words, ['%s_SENT_%s' % (fname, item_no)])
+                    yield TaggedDocument(words, ['{}_SENT_{}'.format(fname, item_no)])
 
 
-class TaggedLineDocument(object):
+class TaggedLineDocument:
     """Simple format: one document = one line = one TaggedDocument object.
 
     Words are expected to be already preprocessed and separated by whitespace,

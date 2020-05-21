@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -91,7 +90,7 @@ class Text2BowTransformer(TransformerMixin, BaseEstimator):
             )
 
         # input as python lists
-        if isinstance(docs, string_types):
+        if isinstance(docs, str):
             docs = [docs]
         tokenized_docs = (list(self.tokenizer(doc)) for doc in docs)
         return [self.gensim_model.doc2bow(doc) for doc in tokenized_docs]

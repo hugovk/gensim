@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2017 Anmol Gulati <anmol01gulati@gmail.com>
 # Copyright (C) 2017 Radim Rehurek <radimrehurek@seznam.cz>

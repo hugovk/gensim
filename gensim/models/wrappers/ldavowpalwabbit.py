@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2015 Dave Challis <dave@suicas.net>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -82,9 +81,6 @@ Vowpal Wabbit works on files, so this wrapper maintains a temporary directory wh
 reading/writing there as necessary.
 
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import logging
 import os
@@ -377,7 +373,7 @@ class LdaVowpalWabbit(utils.SaveLoad):
             Topic `topicid` in text representation.
 
         """
-        return ' + '.join('{0:.3f}*{1}'.format(v[0], v[1]) for v in self.show_topic(topicid, topn))
+        return ' + '.join('{:.3f}*{}'.format(v[0], v[1]) for v in self.show_topic(topicid, topn))
 
     def show_topic(self, topicid, topn=10):
         """Get `num_words` most probable words for the given `topicid`.
@@ -425,7 +421,7 @@ class LdaVowpalWabbit(utils.SaveLoad):
         if 'ignore' not in kwargs:
             kwargs['ignore'] = frozenset(['_topics', 'tmp_dir'])
 
-        super(LdaVowpalWabbit, self).save(fname, *args, **kwargs)
+        super().save(fname, *args, **kwargs)
 
     @classmethod
     def load(cls, fname, *args, **kwargs):
@@ -437,7 +433,7 @@ class LdaVowpalWabbit(utils.SaveLoad):
             Path to file with :class:`~gensim.models.wrappers.ldavowpalwabbit.LdaVowpalWabbit`.
 
         """
-        lda_vw = super(LdaVowpalWabbit, cls).load(fname, *args, **kwargs)
+        lda_vw = super().load(fname, *args, **kwargs)
         lda_vw._init_temp_dir(prefix=lda_vw.tmp_prefix)
 
         if lda_vw._model_data:
@@ -741,8 +737,8 @@ class LdaVowpalWabbit(utils.SaveLoad):
     def __str__(self):
         """Get text representation of model."""
         fields = ['num_terms', 'num_topics', 'chunksize', 'alpha', 'eta']
-        kv = ["{0}={1}".format(field, getattr(self, field)) for field in fields]
-        return "{0}({1})".format(self.__class__.__name__, ', '.join(kv))
+        kv = ["{}={}".format(field, getattr(self, field)) for field in fields]
+        return "{}({})".format(self.__class__.__name__, ', '.join(kv))
 
 
 def corpus_to_vw(corpus):
@@ -773,7 +769,7 @@ def corpus_to_vw(corpus):
     for entries in corpus:
         line = ['|']
         for word_id, count in entries:
-            line.append("{0}:{1}".format(word_id, count))
+            line.append("{}:{}".format(word_id, count))
         yield ' '.join(line)
 
 

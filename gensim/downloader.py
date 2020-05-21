@@ -50,7 +50,6 @@ GENSIM_DATA_DIR environment variable.  For example:
 By default, this subdirectory is ~/gensim-data.
 
 """
-from __future__ import absolute_import
 import argparse
 import os
 import io
@@ -120,7 +119,7 @@ def _progress(chunks_downloaded, chunk_size, total_size, part=1, total_parts=1):
     bar = '=' * filled_len + '-' * (bar_len - filled_len)
     if total_parts == 1:
         sys.stdout.write(
-            '\r[%s] %s%s %s/%sMB downloaded' % (
+            '\r[{}] {}{} {}/{}MB downloaded'.format(
                 bar, percent_downloaded, "%",
                 round(size_downloaded / (1024 * 1024), 1),
                 round(float(total_size) / (1024 * 1024), 1))
@@ -128,7 +127,7 @@ def _progress(chunks_downloaded, chunk_size, total_size, part=1, total_parts=1):
         sys.stdout.flush()
     else:
         sys.stdout.write(
-            '\r Part %s/%s [%s] %s%s %s/%sMB downloaded' % (
+            '\r Part {}/{} [{}] {}{} {}/{}MB downloaded'.format(
                 part + 1, total_parts, bar, percent_downloaded, "%",
                 round(size_downloaded / (1024 * 1024), 1),
                 round(float(total_size) / (1024 * 1024), 1))
@@ -196,7 +195,7 @@ def _load_info(url=DATA_LIST_URL, encoding='utf-8'):
 
     try:
         info_bytes = urlopen(url).read()
-    except (OSError, IOError):
+    except OSError:
         #
         # The exception raised by urlopen differs between Py2 and Py3.
         #
@@ -215,9 +214,9 @@ def _load_info(url=DATA_LIST_URL, encoding='utf-8'):
         #
         # We need io.open here because Py2 open doesn't support encoding keyword
         #
-        with io.open(cache_path, 'r', encoding=encoding) as fin:
+        with open(cache_path, 'r', encoding=encoding) as fin:
             return json.load(fin)
-    except IOError:
+    except OSError:
         raise ValueError(
             'unable to read local cache %r during fallback, '
             'connect to the Internet and retry' % cache_path

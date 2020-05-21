@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Original author: Jan Hajic jr.
 # Copyright (C) 2015 Radim Rehurek and gensim team.
@@ -17,7 +16,6 @@ using SGD, which usually involves heavy matrix multiplication).
 
 """
 
-from __future__ import print_function
 
 import logging
 import os
@@ -26,7 +24,6 @@ import numpy
 import scipy.sparse as sparse
 import time
 
-from six.moves import range
 
 import gensim
 from gensim.corpora import IndexedCorpus
@@ -264,7 +261,7 @@ class ShardedCorpus(IndexedCorpus):
         is_corpus, corpus = gensim.utils.is_corpus(corpus)
         if not is_corpus:
             raise ValueError(
-                "Cannot initialize shards without a corpus to read from! (Got corpus type: {0})".format(type(corpus))
+                "Cannot initialize shards without a corpus to read from! (Got corpus type: {})".format(type(corpus))
             )
 
         proposed_dim = self._guess_n_features(corpus)
@@ -360,7 +357,7 @@ class ShardedCorpus(IndexedCorpus):
 
         filename = self._shard_name(n)
         if not os.path.isfile(filename):
-            raise ValueError('Attempting to load nonexistent shard no. {0}'.format(n))
+            raise ValueError('Attempting to load nonexistent shard no. {}'.format(n))
         shard = gensim.utils.unpickle(filename)
 
         self.current_shard = shard
@@ -387,10 +384,10 @@ class ShardedCorpus(IndexedCorpus):
         """
         k = int(offset / self.shardsize)
         if offset >= self.n_docs:
-            raise ValueError('Too high offset specified ({0}), available '
-                             'docs: {1}'.format(offset, self.n_docs))
+            raise ValueError('Too high offset specified ({}), available '
+                             'docs: {}'.format(offset, self.n_docs))
         if offset < 0:
-            raise ValueError('Negative offset {0} currently not'
+            raise ValueError('Negative offset {} currently not'
                              ' supported.'.format(offset))
         return k
 
@@ -440,8 +437,8 @@ class ShardedCorpus(IndexedCorpus):
             if new_stop > self.n_docs:
                 # Sanity check
                 assert new_shard_idx == n_new_shards - 1, \
-                    'Shard no. {0} that ends at {1} over last document' \
-                    ' ({2}) is not the last projected shard ({3})???' \
+                    'Shard no. {} that ends at {} over last document' \
+                    ' ({}) is not the last projected shard ({})???' \
                     ''.format(new_shard_idx, new_stop, self.n_docs, n_new_shards)
                 new_stop = self.n_docs
 
@@ -525,7 +522,7 @@ class ShardedCorpus(IndexedCorpus):
             if not self.dim:
                 raise TypeError(
                     "Couldn't find number of features, refusing to guess "
-                    "(dimension set to {0}, type of corpus: {1})."
+                    "(dimension set to {}, type of corpus: {})."
                     .format(self.dim, type(corpus))
                 )
             else:
@@ -591,7 +588,7 @@ class ShardedCorpus(IndexedCorpus):
             start = offset.start
             stop = offset.stop
             if stop > self.n_docs:
-                raise IndexError('Requested slice offset {0} out of range ({1} docs)'.format(stop, self.n_docs))
+                raise IndexError('Requested slice offset {} out of range ({} docs)'.format(stop, self.n_docs))
 
             # - get range of shards over which to iterate
             first_shard = self.shard_by_offset(start)
@@ -702,7 +699,7 @@ class ShardedCorpus(IndexedCorpus):
         else:
             if s_result.shape != (result_start, self.dim):
                 raise ValueError(
-                    'Assuption about sparse s_result shape invalid: {0} expected rows, {1} real rows.'
+                    'Assuption about sparse s_result shape invalid: {} expected rows, {} real rows.'
                     .format(result_start, s_result.shape[0])
                 )
 
@@ -772,14 +769,14 @@ class ShardedCorpus(IndexedCorpus):
         if 'ignore' in kwargs:
             attrs_to_ignore.extend(kwargs['ignore'])
         kwargs['ignore'] = frozenset(attrs_to_ignore)
-        super(ShardedCorpus, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @classmethod
     def load(cls, fname, mmap=None):
         """
         Load itself in clean state. `mmap` has no effect here.
         """
-        return super(ShardedCorpus, cls).load(fname, mmap)
+        return super().load(fname, mmap)
 
     @staticmethod
     def save_corpus(fname, corpus, id2word=None, progress_cnt=1000, metadata=False, **kwargs):

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -12,7 +11,7 @@ import numpy as np
 import six
 
 
-class TestBaseTopicModel(object):
+class TestBaseTopicModel:
     def test_print_topic(self):
         topics = self.model.show_topics(formatted=True)
         for topic_no, topic in topics:
@@ -30,7 +29,7 @@ class TestBaseTopicModel(object):
         topic = self.model.show_topic(1)
 
         for k, v in topic:
-            self.assertTrue(isinstance(k, six.string_types))
+            self.assertTrue(isinstance(k, str))
             self.assertTrue(isinstance(v, (np.floating, float)))
 
     def test_show_topics(self):
@@ -40,7 +39,7 @@ class TestBaseTopicModel(object):
             self.assertTrue(isinstance(topic_no, int))
             self.assertTrue(isinstance(topic, list))
             for k, v in topic:
-                self.assertTrue(isinstance(k, six.string_types))
+                self.assertTrue(isinstance(k, str))
                 self.assertTrue(isinstance(v, (np.floating, float)))
 
     def test_get_topics(self):

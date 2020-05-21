@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -32,7 +31,7 @@ PAT_TAG = re.compile(r'<(.*?)>(.*)</.*?>')
 logger = logging.getLogger('gensim.corpora.sources')
 
 
-class ArticleSource(object):
+class ArticleSource:
     """
     Objects of this class describe a single source of articles.
 

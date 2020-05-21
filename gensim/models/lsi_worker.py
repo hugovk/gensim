@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -53,7 +52,6 @@ Command line arguments
 
 """
 
-from __future__ import with_statement
 import os
 import sys
 import logging
@@ -74,7 +72,7 @@ logger = logging.getLogger(__name__)
 SAVE_DEBUG = 0  # save intermediate models after every SAVE_DEBUG updates (0 for never)
 
 
-class Worker(object):
+class Worker:
     def __init__(self):
         """Partly initialize the model.
 

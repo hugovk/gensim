@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2014 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -142,7 +141,7 @@ if WHEELHOUSE_UPLOADER_COMMANDS.intersection(sys.argv):
     cmdclass.update(vars(wheelhouse_uploader.cmd))
 
 
-LONG_DESCRIPTION = u"""
+LONG_DESCRIPTION = """
 ==============================================
 gensim -- Topic Modelling in Python
 ==============================================
@@ -348,7 +347,7 @@ setup(
     cmdclass=cmdclass,
     packages=find_packages(),
 
-    author=u'Radim Rehurek',
+    author='Radim Rehurek',
     author_email='me@radimrehurek.com',
 
     url='http://radimrehurek.com/gensim',

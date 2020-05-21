@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -7,14 +6,12 @@
 
 """Сorpus in Blei's LDA-C format."""
 
-from __future__ import with_statement
 
 from os import path
 import logging
 
 from gensim import utils
 from gensim.corpora import IndexedCorpus
-from six.moves import range
 
 
 logger = logging.getLogger(__name__)
@@ -71,7 +68,7 @@ class BleiCorpus(IndexedCorpus):
                 if path.exists(fname_vocab):
                     break
             else:
-                raise IOError('BleiCorpus: could not find vocabulary file')
+                raise OSError('BleiCorpus: could not find vocabulary file')
 
         self.fname = fname
         with utils.open(fname_vocab, 'rb') as fin:
@@ -109,7 +106,7 @@ class BleiCorpus(IndexedCorpus):
         """
         parts = utils.to_unicode(line).split()
         if int(parts[0]) != len(parts) - 1:
-            raise ValueError("invalid format in %s: %s" % (self.fname, repr(line)))
+            raise ValueError("invalid format in {}: {}".format(self.fname, repr(line)))
         doc = [part.rsplit(':', 1) for part in parts[1:]]
         doc = [(int(p1), float(p2)) for p1, p2 in doc]
         return doc

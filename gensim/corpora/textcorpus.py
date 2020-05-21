@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -34,7 +33,6 @@ See Also
 """
 
 
-from __future__ import with_statement
 
 import logging
 import os
@@ -427,9 +425,9 @@ class TextCorpus(interfaces.CorpusABC):
             length = len(self)
 
         if not n <= length:
-            raise ValueError("n {0:d} is larger/equal than length of corpus {1:d}.".format(n, length))
+            raise ValueError("n {:d} is larger/equal than length of corpus {:d}.".format(n, length))
         if not 0 <= n:
-            raise ValueError("Negative sample size n {0:d}.".format(n))
+            raise ValueError("Negative sample size n {:d}.".format(n))
 
         i = 0
         for i, sample in enumerate(self.getstream()):
@@ -448,7 +446,7 @@ class TextCorpus(interfaces.CorpusABC):
         if n != 0:
             # This means that length was set to be greater than number of items in corpus
             # and we were not able to sample enough documents before the stream ended.
-            raise ValueError("length {0:d} greater than number of documents in corpus {1:d}".format(length, i + 1))
+            raise ValueError("length {:d} greater than number of documents in corpus {:d}".format(length, i + 1))
 
     def __len__(self):
         """Get length of corpus
@@ -510,7 +508,7 @@ class TextDirectoryCorpus(TextCorpus):
         self.pattern = pattern
         self.exclude_pattern = exclude_pattern
         self.lines_are_documents = lines_are_documents
-        super(TextDirectoryCorpus, self).__init__(input, dictionary, metadata, **kwargs)
+        super().__init__(input, dictionary, metadata, **kwargs)
 
     @property
     def lines_are_documents(self):
@@ -588,7 +586,7 @@ class TextDirectoryCorpus(TextCorpus):
         """
         num_texts = 0
         for path in self.iter_filepaths():
-            with open(path, 'rt') as f:
+            with open(path) as f:
                 if self.lines_are_documents:
                     for line in f:
                         yield line.strip()
@@ -684,7 +682,6 @@ def walk(top, topdown=True, onerror=None, followlinks=False, depth=0):
         if followlinks or not islink(new_path):
 
             # Generator so besides the recursive `walk()` call, no additional cost here.
-            for x in walk(new_path, topdown, onerror, followlinks, depth + 1):
-                yield x
+            yield from walk(new_path, topdown, onerror, followlinks, depth + 1)
     if not topdown:
         yield depth, top, dirs, nondirs

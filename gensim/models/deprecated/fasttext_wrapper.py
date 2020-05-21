@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Jayant Jain <jayantjain1992@gmail.com>
 # Copyright (C) 2017 Radim Rehurek <me@radimrehurek.com>
@@ -66,7 +65,7 @@ class FastTextKeyedVectors(KeyedVectors):
     """
 
     def __init__(self):
-        super(FastTextKeyedVectors, self).__init__()
+        super().__init__()
         self.syn0_vocab = None
         self.syn0_vocab_norm = None
         self.syn0_ngrams = None
@@ -80,7 +79,7 @@ class FastTextKeyedVectors(KeyedVectors):
     def save(self, *args, **kwargs):
         # don't bother storing the cached normalized vectors
         kwargs['ignore'] = kwargs.get('ignore', ['syn0norm', 'syn0_vocab_norm', 'syn0_ngrams_norm'])
-        super(FastTextKeyedVectors, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def word_vec(self, word, use_norm=False):
         """
@@ -99,7 +98,7 @@ class FastTextKeyedVectors(KeyedVectors):
 
         """
         if word in self.vocab:
-            return super(FastTextKeyedVectors, self).word_vec(word, use_norm)
+            return super().word_vec(word, use_norm)
         else:
             word_vec = np.zeros(self.syn0_ngrams.shape[1], dtype=np.float32)
             ngrams = compute_ngrams(word, self.min_n, self.max_n)
@@ -126,7 +125,7 @@ class FastTextKeyedVectors(KeyedVectors):
         effectively read-only = you can only call `most_similar`, `similarity` etc.
 
         """
-        super(FastTextKeyedVectors, self).init_sims(replace)
+        super().init_sims(replace)
         if getattr(self, 'syn0_ngrams_norm', None) is None or replace:
             logger.info("precomputing L2-norms of ngram weight vectors")
             if replace:
@@ -250,7 +249,7 @@ class FastText(Word2Vec):
     def save(self, *args, **kwargs):
         # don't bother storing the cached normalized vectors
         kwargs['ignore'] = kwargs.get('ignore', ['syn0norm', 'syn0_vocab_norm', 'syn0_ngrams_norm'])
-        super(FastText, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @classmethod
     def load_fasttext_format(cls, model_file, encoding='utf8'):
@@ -276,7 +275,7 @@ class FastText(Word2Vec):
 
     @classmethod
     def load(cls, *args, **kwargs):
-        model = super(FastText, cls).load(*args, **kwargs)
+        model = super().load(*args, **kwargs)
         if hasattr(model.wv, 'syn0_all'):
             setattr(model.wv, 'syn0_ngrams', model.wv.syn0_all)
             delattr(model.wv, 'syn0_all')

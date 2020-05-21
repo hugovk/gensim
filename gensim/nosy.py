@@ -46,7 +46,7 @@ if __name__ == '__main__':
         while True:
             if check_sum() != val:
                 val = check_sum()
-                os.system('%s %s %s' % (EXECUTABLE, DEFAULTARGS, ' '.join(sys.argv[1:])))
+                os.system('{} {} {}'.format(EXECUTABLE, DEFAULTARGS, ' '.join(sys.argv[1:])))
                 print(datetime.datetime.now().__str__())
                 print('=' * 77)
             time.sleep(1)

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2016 Radim Rehurek <radimrehurek@seznam.cz>
 # Copyright (C) 2016 Olavur Mortensen <olavurmortensen@gmail.com>
@@ -70,7 +69,6 @@ from gensim.matutils import dirichlet_expectation, mean_absolute_difference
 from gensim.corpora import MmCorpus
 from itertools import chain
 from scipy.special import gammaln  # gamma function utils
-from six.moves import range
 import six
 
 logger = logging.getLogger(__name__)
@@ -283,7 +281,7 @@ class AuthorTopicModel(LdaModel):
         assert self.alpha.shape == (self.num_topics,), \
             "Invalid alpha shape. Got shape %s, but expected (%d, )" % (str(self.alpha.shape), self.num_topics)
 
-        if isinstance(eta, six.string_types):
+        if isinstance(eta, str):
             if eta == 'asymmetric':
                 raise ValueError("The 'asymmetric' option cannot be used for eta")
 
@@ -458,7 +456,7 @@ class AuthorTopicModel(LdaModel):
                 doc_no = d
             # Get the IDs and counts of all the words in the current document.
             # TODO: this is duplication of code in LdaModel. Refactor.
-            if doc and not isinstance(doc[0][0], six.integer_types + (np.integer,)):
+            if doc and not isinstance(doc[0][0], (int,) + (np.integer,)):
                 # make sure the term IDs are ints, otherwise np will get upset
                 ids = [int(idx) for idx, _ in doc]
             else:

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Zygmunt Zając <zygmunt@fastml.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -7,7 +6,6 @@
 """Corpus in CSV format."""
 
 
-from __future__ import with_statement
 
 import logging
 import csv

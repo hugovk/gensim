@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -9,14 +8,12 @@ Automated tests for checking transformation algorithms (the models package).
 """
 
 
-from __future__ import with_statement, division
 
 import logging
 import unittest
 import os
 import six
 
-from six.moves import zip, range
 from collections import namedtuple
 from testfixtures import log_capture
 
@@ -27,14 +24,14 @@ from gensim.models import doc2vec, keyedvectors
 from gensim.test.utils import datapath, get_tmpfile, temporary_file, common_texts as raw_sentences
 
 
-class DocsLeeCorpus(object):
+class DocsLeeCorpus:
     def __init__(self, string_tags=False, unicode_tags=False):
         self.string_tags = string_tags
         self.unicode_tags = unicode_tags
 
     def _tag(self, i):
         if self.unicode_tags:
-            return u'_\xa1_%d' % i
+            return '_\xa1_%d' % i
         elif self.string_tags:
             return '_*%d' % i
         return i
@@ -701,14 +698,14 @@ class TestDoc2VecModel(unittest.TestCase):
 if not hasattr(TestDoc2VecModel, 'assertLess'):
     # workaround for python 2.6
     def assertLess(self, a, b, msg=None):
-        self.assertTrue(a < b, msg="%s is not less than %s" % (a, b))
+        self.assertTrue(a < b, msg="{} is not less than {}".format(a, b))
 
     setattr(TestDoc2VecModel, 'assertLess', assertLess)
 
 
 # following code is useful for reproducing paragraph-vectors paper sentiment experiments
 
-class ConcatenatedDoc2Vec(object):
+class ConcatenatedDoc2Vec:
     """
     Concatenation of multiple models for reproducing the Paragraph Vectors paper.
     Models must have exactly-matching vocabulary and document IDs. (Models should
@@ -738,7 +735,7 @@ class ConcatenatedDoc2Vec(object):
         pass  # train subcomponents individually
 
 
-class ConcatenatedDocvecs(object):
+class ConcatenatedDocvecs:
     def __init__(self, models):
         self.models = models
 
@@ -780,8 +777,8 @@ def read_su_sentiment_rotten_tomatoes(dirname, lowercase=True):
 
     # read sentences to temp {sentence -> (id,split) dict, to correlate with dictionary.txt
     info_by_sentence = {}
-    with open(os.path.join(dirname, 'datasetSentences.txt'), 'r') as sentences:
-        with open(os.path.join(dirname, 'datasetSplit.txt'), 'r') as splits:
+    with open(os.path.join(dirname, 'datasetSentences.txt')) as sentences:
+        with open(os.path.join(dirname, 'datasetSplit.txt')) as splits:
             next(sentences)  # legend
             next(splits)     # legend
             for sentence_line, split_line in zip(sentences, splits):
@@ -797,7 +794,7 @@ def read_su_sentiment_rotten_tomatoes(dirname, lowercase=True):
 
     # read all phrase text
     phrases = [None] * 239232  # known size of phrases
-    with open(os.path.join(dirname, 'dictionary.txt'), 'r') as phrase_lines:
+    with open(os.path.join(dirname, 'dictionary.txt')) as phrase_lines:
         for line in phrase_lines:
             (text, id) = line.split('|')
             for junk, fix in phrase_fixups:
@@ -806,7 +803,7 @@ def read_su_sentiment_rotten_tomatoes(dirname, lowercase=True):
 
     SentimentPhrase = namedtuple('SentimentPhrase', SentimentDocument._fields + ('sentence_id',))
     # add sentiment labels, correlate with sentences
-    with open(os.path.join(dirname, 'sentiment_labels.txt'), 'r') as sentiments:
+    with open(os.path.join(dirname, 'sentiment_labels.txt')) as sentiments:
         next(sentiments)  # legend
         for line in sentiments:
             (id, sentiment) = line.split('|')

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Jayant Jain <jayantjain1992@gmail.com>
 # Copyright (C) 2017 Radim Rehurek <me@radimrehurek.com>
@@ -159,7 +158,7 @@ def poincare_distance_heatmap(origin_point, x_range=(-1.0, 1.0), y_range=(-1.0, 
             ),
         ),
         text=[
-            'Distance from (%.2f, %.2f): %.2f' % (origin_point[0], origin_point[1], d)
+            'Distance from ({:.2f}, {:.2f}): {:.2f}'.format(origin_point[0], origin_point[1], d)
             for d in all_distances],
         name='',  # To avoid the default 'trace 0'
     )
@@ -167,7 +166,7 @@ def poincare_distance_heatmap(origin_point, x_range=(-1.0, 1.0), y_range=(-1.0, 
     origin = go.Scatter(
         x=[origin_point[0]],
         y=[origin_point[1]],
-        name='Distance from (%.2f, %.2f)' % (origin_point[0], origin_point[1]),
+        name='Distance from ({:.2f}, {:.2f})'.format(origin_point[0], origin_point[1]),
         mode='markers+text',
         marker=dict(
             size='10',
@@ -179,7 +178,7 @@ def poincare_distance_heatmap(origin_point, x_range=(-1.0, 1.0), y_range=(-1.0, 
         width=900,
         height=800,
         showlegend=False,
-        title='Poincare Distances from (%.2f, %.2f)' % (origin_point[0], origin_point[1]),
+        title='Poincare Distances from ({:.2f}, {:.2f})'.format(origin_point[0], origin_point[1]),
         hovermode='closest',
     )
 

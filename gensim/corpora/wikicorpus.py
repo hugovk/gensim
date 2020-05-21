@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Copyright (C) 2012 Lars Buitinck <larsmans@gmail.com>
@@ -705,8 +704,8 @@ class WikiCorpus(TextCorpus):
                 articles, positions, articles_all, positions_all, self.article_min_tokens
             )
         except PicklingError as exc:
-            raise_from(PicklingError('Can not send filtering function {} to multiprocessing, '
-                'make sure the function can be pickled.'.format(self.filter_articles)), exc)
+            raise PicklingError('Can not send filtering function {} to multiprocessing, '
+                'make sure the function can be pickled.'.format(self.filter_articles)) from exc
         else:
             logger.info(
                 "finished iterating over Wikipedia corpus of %i documents with %i positions "

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Shiva Manne <manneshiva@gmail.com>
 # Copyright (C) 2018 RaRe Technologies s.r.o.
@@ -81,7 +80,6 @@ from gensim.utils import call_on_class_only, deprecated
 from gensim import utils, matutils  # utility fnc for pickling, common scipy operations etc
 from gensim.models.word2vec import Word2VecKeyedVectors, Word2VecVocab, Word2VecTrainables
 from gensim.models.word2vec import train_cbow_pair, train_sg_pair, train_batch_sg  # noqa
-from six.moves import range
 from six import string_types, integer_types, itervalues
 from gensim.models.base_any2vec import BaseWordEmbeddingsModel
 from gensim.models.keyedvectors import Doc2VecKeyedVectors
@@ -143,7 +141,7 @@ class TaggedDocument(namedtuple('TaggedDocument', 'words tags')):
            Human readable representation of the object's state (words and tags).
 
         """
-        return '%s(%s, %s)' % (self.__class__.__name__, self.words, self.tags)
+        return '{}({}, {})'.format(self.__class__.__name__, self.words, self.tags)
 
 
 # for compatibility
@@ -316,7 +314,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
             warnings.warn("The parameter `size` is deprecated, will be removed in 4.0.0, use `vector_size` instead.")
             kwargs['vector_size'] = kwargs['size']
 
-        super(Doc2Vec, self).__init__(
+        super().__init__(
             sg=(1 + dm) % 2,
             null_word=dm_concat,
             callbacks=callbacks,
@@ -333,11 +331,11 @@ class Doc2Vec(BaseWordEmbeddingsModel):
 
         kwargs['null_word'] = dm_concat
         vocabulary_keys = ['max_vocab_size', 'min_count', 'sample', 'sorted_vocab', 'null_word', 'ns_exponent']
-        vocabulary_kwargs = dict((k, kwargs[k]) for k in vocabulary_keys if k in kwargs)
+        vocabulary_kwargs = {k: kwargs[k] for k in vocabulary_keys if k in kwargs}
         self.vocabulary = Doc2VecVocab(**vocabulary_kwargs)
 
         trainables_keys = ['seed', 'hashfxn', 'window']
-        trainables_kwargs = dict((k, kwargs[k]) for k in trainables_keys if k in kwargs)
+        trainables_kwargs = {k: kwargs[k] for k in trainables_keys if k in kwargs}
         self.trainables = Doc2VecTrainables(
             dm=dm, dm_concat=dm_concat, dm_tag_count=dm_tag_count,
             vector_size=self.vector_size, **trainables_kwargs)
@@ -349,7 +347,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
 
         if documents is not None or corpus_file is not None:
             self._check_input_data_sanity(data_iterable=documents, corpus_file=corpus_file)
-            if corpus_file is not None and not isinstance(corpus_file, string_types):
+            if corpus_file is not None and not isinstance(corpus_file, str):
                 raise TypeError("You must pass string as the corpus_file argument.")
             elif isinstance(documents, GeneratorType):
                 raise TypeError("You can't pass a generator as the documents argument. Try a sequence.")
@@ -548,7 +546,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
             kwargs['offsets'] = offsets
             kwargs['start_doctags'] = start_doctags
 
-        super(Doc2Vec, self).train(
+        super().train(
             sentences=documents, corpus_file=corpus_file, total_examples=total_examples, total_words=total_words,
             epochs=epochs, start_alpha=start_alpha, end_alpha=end_alpha, word_count=word_count,
             queue_factor=queue_factor, report_delay=report_delay, callbacks=callbacks, **kwargs)
@@ -655,7 +653,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
             The inferred paragraph vector for the new document.
 
         """
-        if isinstance(doc_words, string_types):
+        if isinstance(doc_words, str):
             raise TypeError("Parameter doc_words of infer_vector() must be a list of strings (not a single string).")
 
         alpha = alpha or self.alpha
@@ -704,7 +702,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
             The vector representations of each tag as a matrix (will be 1D if `tag` was a single tag)
 
         """
-        if isinstance(tag, string_types + integer_types + (integer,)):
+        if isinstance(tag, (str,) + (int,) + (integer,)):
             if tag not in self.wv.vocab:
                 return self.docvecs[tag]
             return self.wv[tag]
@@ -749,7 +747,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
             segments.append('s%g' % self.vocabulary.sample)
         if self.workers > 1:
             segments.append('t%d' % self.workers)
-        return '%s(%s)' % (self.__class__.__name__, ','.join(segments))
+        return '{}({})'.format(self.__class__.__name__, ','.join(segments))
 
     def delete_temporary_training_data(self, keep_doctags_vectors=True, keep_inference=True):
         """Discard parameters that are used in training and score. Use if you're sure you're done training a model.
@@ -851,7 +849,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
 
         """
         try:
-            return super(Doc2Vec, cls).load(*args, **kwargs)
+            return super().load(*args, **kwargs)
         except AttributeError:
             logger.info('Model saved using code from earlier Gensim Version. Re-loading old model in a compatible way.')
             from gensim.models.deprecated.doc2vec import load_old_doc2vec
@@ -879,7 +877,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
         report = report or {}
         report['doctag_lookup'] = self.estimated_lookup_memory()
         report['doctag_syn0'] = self.docvecs.count * self.vector_size * dtype(REAL).itemsize
-        return super(Doc2Vec, self).estimate_memory(vocab_size, report=report)
+        return super().estimate_memory(vocab_size, report=report)
 
     def build_vocab(self, documents=None, corpus_file=None, update=False, progress_per=10000, keep_raw_vocab=False,
                     trim_rule=None, **kwargs):
@@ -972,7 +970,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
         raw_vocab = word_freq
         logger.info(
             "collected %i different raw word, with total frequency of %i",
-            len(raw_vocab), sum(itervalues(raw_vocab))
+            len(raw_vocab), sum(raw_vocab.values())
         )
 
         # Since no documents are provided, this is to control the corpus_count
@@ -990,7 +988,7 @@ class Doc2Vec(BaseWordEmbeddingsModel):
 
 def _note_doctag(key, document_length, docvecs):
     """Note a document tag during initial corpus scan, for structure sizing."""
-    if isinstance(key, integer_types + (integer,)):
+    if isinstance(key, (int,) + (integer,)):
         docvecs.max_rawint = max(docvecs.max_rawint, key)
     else:
         if key in docvecs.doctags:
@@ -1034,7 +1032,7 @@ class Doc2VecVocab(Word2VecVocab):
             other values may perform better for recommendation applications.
 
         """
-        super(Doc2VecVocab, self).__init__(
+        super().__init__(
             max_vocab_size=max_vocab_size, min_count=min_count, sample=sample,
             sorted_vocab=sorted_vocab, null_word=null_word, ns_exponent=ns_exponent)
 
@@ -1048,7 +1046,7 @@ class Doc2VecVocab(Word2VecVocab):
         vocab = defaultdict(int)
         for document_no, document in enumerate(documents):
             if not checked_string_types:
-                if isinstance(document.words, string_types):
+                if isinstance(document.words, str):
                     logger.warning(
                         "Each 'words' should be a list of words (usually unicode strings). "
                         "First 'words' here is instead plain %s.",
@@ -1164,7 +1162,7 @@ class Doc2VecVocab(Word2VecVocab):
             Whether or not the passed tag exists in our vocabulary.
 
         """
-        if isinstance(index, integer_types + (integer,)):
+        if isinstance(index, (int,) + (integer,)):
             return index < docvecs.count
         else:
             return index in docvecs.doctags
@@ -1173,7 +1171,7 @@ class Doc2VecVocab(Word2VecVocab):
 class Doc2VecTrainables(Word2VecTrainables):
     """Represents the inner shallow neural network used to train :class:`~gensim.models.doc2vec.Doc2Vec`."""
     def __init__(self, dm=1, dm_concat=0, dm_tag_count=1, vector_size=100, seed=1, hashfxn=hash, window=5):
-        super(Doc2VecTrainables, self).__init__(
+        super().__init__(
             vector_size=vector_size, seed=seed, hashfxn=hashfxn)
         if dm and dm_concat:
             self.layer1_size = (dm_tag_count + (2 * window)) * vector_size
@@ -1188,7 +1186,7 @@ class Doc2VecTrainables(Word2VecTrainables):
             self.update_weights(hs, negative, wv)
 
     def reset_weights(self, hs, negative, wv, docvecs, vocabulary=None):
-        super(Doc2VecTrainables, self).reset_weights(hs, negative, wv)
+        super().reset_weights(hs, negative, wv)
         self.reset_doc_weights(docvecs)
 
     def reset_doc_weights(self, docvecs):
@@ -1218,7 +1216,7 @@ class Doc2VecTrainables(Word2VecTrainables):
         return doctag_vectors, doctag_locks
 
 
-class TaggedBrownCorpus(object):
+class TaggedBrownCorpus:
     """Reader for the `Brown corpus (part of NLTK data) <http://www.nltk.org/book/ch02.html#tab-brown-sources>`_."""
 
     def __init__(self, dirname):
@@ -1252,13 +1250,13 @@ class TaggedBrownCorpus(object):
                     # each token is WORD/POS_TAG
                     token_tags = [t.split('/') for t in line.split() if len(t.split('/')) == 2]
                     # ignore words with non-alphabetic tags like ",", "!" etc (punctuation, weird stuff)
-                    words = ["%s/%s" % (token.lower(), tag[:2]) for token, tag in token_tags if tag[:2].isalpha()]
+                    words = ["{}/{}".format(token.lower(), tag[:2]) for token, tag in token_tags if tag[:2].isalpha()]
                     if not words:  # don't bother sending out empty documents
                         continue
-                    yield TaggedDocument(words, ['%s_SENT_%s' % (fname, item_no)])
+                    yield TaggedDocument(words, ['{}_SENT_{}'.format(fname, item_no)])
 
 
-class TaggedLineDocument(object):
+class TaggedLineDocument:
     """Iterate over a file that contains documents: one line = :class:`~gensim.models.doc2vec.TaggedDocument` object.
 
     Words are expected to be already preprocessed and separated by whitespace. Document tags are constructed

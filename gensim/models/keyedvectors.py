@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Shiva Manne <manneshiva@gmail.com>
 # Copyright (C) 2018 RaRe Technologies s.r.o.
@@ -158,7 +157,6 @@ and so on.
 
 """
 
-from __future__ import division  # py3 "true division"
 
 from itertools import chain
 import logging
@@ -177,7 +175,6 @@ import numpy as np
 from gensim import utils, matutils  # utility fnc for pickling, common scipy operations etc
 from gensim.corpora.dictionary import Dictionary
 from six import string_types, integer_types
-from six.moves import zip, range
 from scipy import stats
 from gensim.utils import deprecated
 from gensim.models.utils_any2vec import (
@@ -195,7 +192,7 @@ from gensim.models.deprecated.keyedvectors import EuclideanKeyedVectors  # noqa
 logger = logging.getLogger(__name__)
 
 
-class Vocab(object):
+class Vocab:
     """A single vocabulary item, used internally for collecting per-word frequency/sampling info,
     and for constructing binary trees (incl. both word leaves and inner nodes).
 
@@ -208,8 +205,8 @@ class Vocab(object):
         return self.count < other.count
 
     def __str__(self):
-        vals = ['%s:%r' % (key, self.__dict__[key]) for key in sorted(self.__dict__) if not key.startswith('_')]
-        return "%s(%s)" % (self.__class__.__name__, ', '.join(vals))
+        vals = ['{}:{!r}'.format(key, self.__dict__[key]) for key in sorted(self.__dict__) if not key.startswith('_')]
+        return "{}({})".format(self.__class__.__name__, ', '.join(vals))
 
 
 class BaseKeyedVectors(utils.SaveLoad):
@@ -221,11 +218,11 @@ class BaseKeyedVectors(utils.SaveLoad):
         self.index2entity = []
 
     def save(self, fname_or_handle, **kwargs):
-        super(BaseKeyedVectors, self).save(fname_or_handle, **kwargs)
+        super().save(fname_or_handle, **kwargs)
 
     @classmethod
     def load(cls, fname_or_handle, **kwargs):
-        return super(BaseKeyedVectors, cls).load(fname_or_handle, **kwargs)
+        return super().load(fname_or_handle, **kwargs)
 
     def similarity(self, entity1, entity2):
         """Compute cosine similarity between two entities, specified by their string id."""
@@ -290,7 +287,7 @@ class BaseKeyedVectors(utils.SaveLoad):
             if True - replace vectors, otherwise - keep old vectors.
 
         """
-        if isinstance(entities, string_types):
+        if isinstance(entities, str):
             entities = [entities]
             weights = np.array(weights).reshape(1, -1)
         elif isinstance(weights, list):
@@ -348,7 +345,7 @@ class BaseKeyedVectors(utils.SaveLoad):
             Vector representation for `entities` (1D if `entities` is string, otherwise - 2D).
 
         """
-        if isinstance(entities, string_types):
+        if isinstance(entities, str):
             # allow calls like trained_model['office'], as a shorthand for trained_model[['office']]
             return self.get_vector(entities)
 
@@ -377,7 +374,7 @@ class BaseKeyedVectors(utils.SaveLoad):
 class WordEmbeddingsKeyedVectors(BaseKeyedVectors):
     """Class containing common methods for operations over word vectors."""
     def __init__(self, vector_size):
-        super(WordEmbeddingsKeyedVectors, self).__init__(vector_size=vector_size)
+        super().__init__(vector_size=vector_size)
         self.vectors_norm = None
         self.index2word = []
 
@@ -433,7 +430,7 @@ class WordEmbeddingsKeyedVectors(BaseKeyedVectors):
         """
         # don't bother storing the cached normalized vectors
         kwargs['ignore'] = kwargs.get('ignore', ['vectors_norm'])
-        super(WordEmbeddingsKeyedVectors, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def word_vec(self, word, use_norm=False):
         """Get `word` representations in vector space, as a 1D numpy array.
@@ -486,7 +483,7 @@ class WordEmbeddingsKeyedVectors(BaseKeyedVectors):
             List of words that are closer to `w1` than `w2` is to `w1`.
 
         """
-        return super(WordEmbeddingsKeyedVectors, self).closer_than(w1, w2)
+        return super().closer_than(w1, w2)
 
     def most_similar(self, positive=None, negative=None, topn=10, restrict_vocab=None, indexer=None):
         """Find the top-N most similar words.
@@ -530,17 +527,17 @@ class WordEmbeddingsKeyedVectors(BaseKeyedVectors):
 
         self.init_sims()
 
-        if isinstance(positive, string_types) and not negative:
+        if isinstance(positive, str) and not negative:
             # allow calls like most_similar('dog'), as a shorthand for most_similar(['dog'])
             positive = [positive]
 
         # add weights for each word, if not already present; default to 1.0 for positive and -1.0 for negative words
         positive = [
-            (word, 1.0) if isinstance(word, string_types + (ndarray,)) else word
+            (word, 1.0) if isinstance(word, (str,) + (ndarray,)) else word
             for word in positive
         ]
         negative = [
-            (word, -1.0) if isinstance(word, string_types + (ndarray,)) else word
+            (word, -1.0) if isinstance(word, (str,) + (ndarray,)) else word
             for word in negative
         ]
 
@@ -818,7 +815,7 @@ class WordEmbeddingsKeyedVectors(BaseKeyedVectors):
 
         self.init_sims()
 
-        if isinstance(positive, string_types) and not negative:
+        if isinstance(positive, str) and not negative:
             # allow calls like most_similar_cosmul('dog'), as a shorthand for most_similar_cosmul(['dog'])
             positive = [positive]
 
@@ -828,11 +825,11 @@ class WordEmbeddingsKeyedVectors(BaseKeyedVectors):
             }
 
         positive = [
-            self.word_vec(word, use_norm=True) if isinstance(word, string_types) else word
+            self.word_vec(word, use_norm=True) if isinstance(word, str) else word
             for word in positive
         ]
         negative = [
-            self.word_vec(word, use_norm=True) if isinstance(word, string_types) else word
+            self.word_vec(word, use_norm=True) if isinstance(word, str) else word
             for word in negative
         ]
 
@@ -925,7 +922,7 @@ class WordEmbeddingsKeyedVectors(BaseKeyedVectors):
             If either `word_or_vector` or any word in `other_words` is absent from vocab.
 
         """
-        if isinstance(word_or_vector, string_types):
+        if isinstance(word_or_vector, str):
             input_vector = self.word_vec(word_or_vector)
         else:
             input_vector = word_or_vector
@@ -1465,7 +1462,7 @@ class WordEmbeddingSimilarityIndex(TermSimilarityIndex):
         self.threshold = threshold
         self.exponent = exponent
         self.kwargs = kwargs or {}
-        super(WordEmbeddingSimilarityIndex, self).__init__()
+        super().__init__()
 
     def most_similar(self, t1, topn=10):
         if t1 not in self.keyedvectors.vocab:
@@ -1564,7 +1561,7 @@ KeyedVectors = Word2VecKeyedVectors  # alias for backward compatibility
 class Doc2VecKeyedVectors(BaseKeyedVectors):
 
     def __init__(self, vector_size, mapfile_path):
-        super(Doc2VecKeyedVectors, self).__init__(vector_size=vector_size)
+        super().__init__(vector_size=vector_size)
         self.doctags = {}  # string -> Doctag (only filled if necessary)
         self.max_rawint = -1  # highest rawint-indexed doctag
         self.offset2doctag = []  # int offset-past-(max_rawint+1) -> String (only filled if necessary)
@@ -1607,13 +1604,13 @@ class Doc2VecKeyedVectors(BaseKeyedVectors):
 
         """
         if index in self:
-            if isinstance(index, string_types + integer_types + (integer,)):
+            if isinstance(index, (str,) + (int,) + (integer,)):
                 return self.vectors_docs[self._int_index(index, self.doctags, self.max_rawint)]
             return vstack([self[i] for i in index])
         raise KeyError("tag '%s' not seen in training corpus/invalid" % index)
 
     def __contains__(self, index):
-        if isinstance(index, integer_types + (integer,)):
+        if isinstance(index, (int,) + (integer,)):
             return index < self.count
         else:
             return index in self.doctags
@@ -1637,7 +1634,7 @@ class Doc2VecKeyedVectors(BaseKeyedVectors):
         """
         # don't bother storing the cached normalized vectors
         kwargs['ignore'] = kwargs.get('ignore', ['vectors_docs_norm'])
-        super(Doc2VecKeyedVectors, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def init_sims(self, replace=False):
         """Precompute L2-normalized vectors.
@@ -1706,17 +1703,17 @@ class Doc2VecKeyedVectors(BaseKeyedVectors):
         self.init_sims()
         clip_end = clip_end or len(self.vectors_docs_norm)
 
-        if isinstance(positive, string_types + integer_types + (integer,)) and not negative:
+        if isinstance(positive, (str,) + (int,) + (integer,)) and not negative:
             # allow calls like most_similar('dog'), as a shorthand for most_similar(['dog'])
             positive = [positive]
 
         # add weights for each doc, if not already present; default to 1.0 for positive and -1.0 for negative docs
         positive = [
-            (doc, 1.0) if isinstance(doc, string_types + integer_types + (ndarray, integer))
+            (doc, 1.0) if isinstance(doc, (str,) + (int,) + (ndarray, integer))
             else doc for doc in positive
         ]
         negative = [
-            (doc, -1.0) if isinstance(doc, string_types + integer_types + (ndarray, integer))
+            (doc, -1.0) if isinstance(doc, (str,) + (int,) + (ndarray, integer))
             else doc for doc in negative
         ]
 
@@ -1908,20 +1905,20 @@ class Doc2VecKeyedVectors(BaseKeyedVectors):
         with utils.open(fname, 'ab') as fout:
             if write_first_line:
                 logger.info("storing %sx%s projection weights into %s", total_vec, self.vectors_docs.shape[1], fname)
-                fout.write(utils.to_utf8("%s %s\n" % (total_vec, self.vectors_docs.shape[1])))
+                fout.write(utils.to_utf8("{} {}\n".format(total_vec, self.vectors_docs.shape[1])))
             # store as in input order
             for i in range(len(self)):
-                doctag = u"%s%s" % (prefix, self._index_to_doctag(i, self.offset2doctag, self.max_rawint))
+                doctag = "{}{}".format(prefix, self._index_to_doctag(i, self.offset2doctag, self.max_rawint))
                 row = self.vectors_docs[i]
                 if binary:
                     fout.write(utils.to_utf8(doctag) + b" " + row.tostring())
                 else:
-                    fout.write(utils.to_utf8("%s %s\n" % (doctag, ' '.join("%f" % val for val in row))))
+                    fout.write(utils.to_utf8("{} {}\n".format(doctag, ' '.join("%f" % val for val in row))))
 
     @staticmethod
     def _int_index(index, doctags, max_rawint):
         """Get int index for either string or int index."""
-        if isinstance(index, integer_types + (integer,)):
+        if isinstance(index, (int,) + (integer,)):
             return index
         else:
             return max_rawint + 1 + doctags[index].offset
@@ -1947,7 +1944,7 @@ class Doc2VecKeyedVectors(BaseKeyedVectors):
     # for backward compatibility
     def int_index(self, index, doctags, max_rawint):
         """Get int index for either string or int index"""
-        if isinstance(index, integer_types + (integer,)):
+        if isinstance(index, (int,) + (integer,)):
             return index
         else:
             return max_rawint + 1 + doctags[index].offset
@@ -2006,7 +2003,7 @@ class FastTextKeyedVectors(WordEmbeddingsKeyedVectors):
 
     """
     def __init__(self, vector_size, min_n, max_n, bucket, compatible_hash):
-        super(FastTextKeyedVectors, self).__init__(vector_size=vector_size)
+        super().__init__(vector_size=vector_size)
         self.vectors_vocab = None
         self.vectors_vocab_norm = None
         self.vectors_ngrams = None
@@ -2098,7 +2095,7 @@ class FastTextKeyedVectors(WordEmbeddingsKeyedVectors):
             'hash2index',
         ]
         kwargs['ignore'] = kwargs.get('ignore', ignore_attrs)
-        super(FastTextKeyedVectors, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def word_vec(self, word, use_norm=False):
         """Get `word` representations in vector space, as a 1D numpy array.
@@ -2122,7 +2119,7 @@ class FastTextKeyedVectors(WordEmbeddingsKeyedVectors):
 
         """
         if word in self.vocab:
-            return super(FastTextKeyedVectors, self).word_vec(word, use_norm)
+            return super().word_vec(word, use_norm)
         elif self.bucket == 0:
             raise KeyError('cannot calculate vector for OOV word without ngrams')
         else:
@@ -2162,7 +2159,7 @@ class FastTextKeyedVectors(WordEmbeddingsKeyedVectors):
         :meth:`~gensim.models.keyedvectors.FastTextKeyedVectors.similarity`, etc., but not train.
 
         """
-        super(FastTextKeyedVectors, self).init_sims(replace)
+        super().init_sims(replace)
         if getattr(self, 'vectors_ngrams_norm', None) is None or replace:
             logger.info("precomputing L2-norms of ngram weight vectors")
             self.vectors_ngrams_norm = _l2_norm(self.vectors_ngrams, replace=replace)

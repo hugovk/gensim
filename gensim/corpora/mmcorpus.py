@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -80,7 +79,7 @@ class MmCorpus(matutils.MmReader, IndexedCorpus):
         (sparse) Matrix Market file.
 
         """
-        for doc_id, doc in super(MmCorpus, self).__iter__():
+        for doc_id, doc in super().__iter__():
             yield doc  # get rid of doc id, return the sparse vector only
 
     @staticmethod

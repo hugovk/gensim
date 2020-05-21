@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # Authors: Chinmaya Pancholi <chinmayapancholi13@gmail.com>, Shiva Manne <s.manne@rare-technologies.com>
 # Copyright (C) 2017 RaRe Technologies s.r.o.
 
@@ -345,7 +344,7 @@ class FastText(Word2Vec):
         if self.word_ngrams <= 1 and self.max_n == 0:
             self.bucket = 0
 
-        super(FastText, self).__init__(
+        super().__init__(
             sentences=sentences, size=size, alpha=alpha, window=window, min_count=min_count,
             max_vocab_size=max_vocab_size, sample=sample, seed=seed, workers=workers, min_alpha=min_alpha,
             sg=sg, hs=hs, negative=negative, cbow_mean=cbow_mean, hashfxn=hashfxn, iter=iter, null_word=null_word,
@@ -409,7 +408,7 @@ class FastText(Word2Vec):
             self.old_vocab_len = len(self.wv.vocab)
             self.old_hash2index_len = len(self.wv.hash2index)
 
-        super(FastText, self).build_vocab(
+        super().build_vocab(
             sentences, keep_raw_vocab=keep_raw_vocab, trim_rule=trim_rule, progress_per=progress_per, update=update)
         self.init_ngrams(update=update)
 
@@ -708,4 +707,4 @@ class FastText(Word2Vec):
 
         """
         kwargs['ignore'] = kwargs.get('ignore', ['syn0norm', 'syn0_vocab_norm', 'syn0_ngrams_norm'])
-        super(FastText, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

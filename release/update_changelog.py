@@ -47,7 +47,7 @@ def main():
         contents = fin.read().split('\n')
 
     header, contents = contents[:2], contents[2:]
-    header.append('## %s, %s\n' % (new_version, datetime.date.today().isoformat()))
+    header.append('## {}, {}\n'.format(new_version, datetime.date.today().isoformat()))
     header.append("""
 ### :star2: New Features
 

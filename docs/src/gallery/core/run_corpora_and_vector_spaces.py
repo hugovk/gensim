@@ -136,7 +136,7 @@ print(corpus)
 from smart_open import open  # for transparently opening remote files
 
 
-class MyCorpus(object):
+class MyCorpus:
     def __iter__(self):
         for line in open('https://radimrehurek.com/gensim/mycorpus.txt'):
             # assume there's one document per line, tokens separated by whitespace
@@ -188,7 +188,7 @@ stop_ids = [
     for stopword in stoplist
     if stopword in dictionary.token2id
 ]
-once_ids = [tokenid for tokenid, docfreq in iteritems(dictionary.dfs) if docfreq == 1]
+once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.items() if docfreq == 1]
 dictionary.filter_tokens(stop_ids + once_ids)  # remove stop words and words that appear only once
 dictionary.compactify()  # remove gaps in id sequence after words that were removed
 print(dictionary)

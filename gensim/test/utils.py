@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# encoding: utf-8
 
 """Module contains common utilities used in automated code tests for Gensim modules.
 

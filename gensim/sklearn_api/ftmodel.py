@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Authors: M.Cemil Guney <mcemilguneyy@gmail.com>
 # Copyright (C) 2018 RaRe Technologies s.r.o.
@@ -222,7 +221,7 @@ class FTTransformer(TransformerMixin, BaseEstimator):
             )
 
         # The input as array of array
-        if isinstance(words, six.string_types):
+        if isinstance(words, str):
             words = [words]
         vectors = [self.gensim_model.wv[word] for word in words]
         return np.reshape(np.array(vectors), (len(words), self.size))

@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from __future__ import division
 
 import gzip
 import io
@@ -43,7 +41,7 @@ FT_HOME = os.environ.get("FT_HOME")
 FT_CMD = os.path.join(FT_HOME, "fasttext") if FT_HOME else None
 
 
-class LeeCorpus(object):
+class LeeCorpus:
     def __iter__(self):
         with open(datapath('lee_background.cor')) as f:
             for line in f:
@@ -205,7 +203,7 @@ class TestFastTextModel(unittest.TestCase):
         try:
             model = gensim.models.fasttext.load_facebook_model(self.test_model_file)
         except Exception as exc:
-            self.fail('Unable to load FastText model from file %s: %s' % (self.test_model_file, exc))
+            self.fail('Unable to load FastText model from file {}: {}'.format(self.test_model_file, exc))
         vocab_size, model_size = 1762, 10
         self.assertEqual(model.wv.vectors.shape, (vocab_size, model_size))
         self.assertEqual(len(model.wv.vocab), vocab_size, model_size)
@@ -258,7 +256,7 @@ class TestFastTextModel(unittest.TestCase):
         try:
             new_model = gensim.models.fasttext.load_facebook_model(self.test_new_model_file)
         except Exception as exc:
-            self.fail('Unable to load FastText model from file %s: %s' % (self.test_new_model_file, exc))
+            self.fail('Unable to load FastText model from file {}: {}'.format(self.test_new_model_file, exc))
         vocab_size, model_size = 1763, 10
         self.assertEqual(new_model.wv.vectors.shape, (vocab_size, model_size))
         self.assertEqual(len(new_model.wv.vocab), vocab_size, model_size)
@@ -313,17 +311,17 @@ class TestFastTextModel(unittest.TestCase):
 
     def test_load_model_with_non_ascii_vocab(self):
         model = gensim.models.fasttext.load_facebook_model(datapath('non_ascii_fasttext.bin'))
-        self.assertTrue(u'který' in model.wv)
+        self.assertTrue('který' in model.wv)
         try:
-            model.wv[u'který']
+            model.wv['který']
         except UnicodeDecodeError:
             self.fail('Unable to access vector for utf8 encoded non-ascii word')
 
     def test_load_model_non_utf8_encoding(self):
         model = gensim.models.fasttext.load_facebook_model(datapath('cp852_fasttext.bin'), encoding='cp852')
-        self.assertTrue(u'který' in model.wv)
+        self.assertTrue('který' in model.wv)
         try:
-            model.wv[u'který']
+            model.wv['který']
         except KeyError:
             self.fail('Unable to access vector for cp-852 word')
 
@@ -418,16 +416,16 @@ class TestFastTextModel(unittest.TestCase):
         sims_gensim = model_gensim.wv.most_similar('night', topn=10)
         sims_gensim_words = [word for (word, distance) in sims_gensim]  # get similar words
         expected_sims_words = [
-            u'night,',
-            u'night.',
-            u'rights',
-            u'kilometres',
-            u'in',
-            u'eight',
-            u'according',
-            u'flights',
-            u'during',
-            u'comes']
+            'night,',
+            'night.',
+            'rights',
+            'kilometres',
+            'in',
+            'eight',
+            'according',
+            'flights',
+            'during',
+            'comes']
         overlap_count = len(set(sims_gensim_words).intersection(expected_sims_words))
         self.assertGreaterEqual(overlap_count, 2)
 
@@ -451,16 +449,16 @@ class TestFastTextModel(unittest.TestCase):
             sims_gensim = model_gensim.wv.most_similar('night', topn=10)
             sims_gensim_words = [word for (word, distance) in sims_gensim]  # get similar words
             expected_sims_words = [
-                u'night,',
-                u'night.',
-                u'rights',
-                u'kilometres',
-                u'in',
-                u'eight',
-                u'according',
-                u'flights',
-                u'during',
-                u'comes']
+                'night,',
+                'night.',
+                'rights',
+                'kilometres',
+                'in',
+                'eight',
+                'according',
+                'flights',
+                'during',
+                'comes']
             overlap_count = len(set(sims_gensim_words).intersection(expected_sims_words))
             self.assertGreaterEqual(overlap_count, 2)
 
@@ -480,16 +478,16 @@ class TestFastTextModel(unittest.TestCase):
         sims_gensim = model_gensim.wv.most_similar('night', topn=10)
         sims_gensim_words = [word for (word, distance) in sims_gensim]  # get similar words
         expected_sims_words = [
-            u'night,',
-            u'night.',
-            u'eight',
-            u'nine',
-            u'overnight',
-            u'crew',
-            u'overnight.',
-            u'manslaughter',
-            u'north',
-            u'flight']
+            'night,',
+            'night.',
+            'eight',
+            'nine',
+            'overnight',
+            'crew',
+            'overnight.',
+            'manslaughter',
+            'north',
+            'flight']
         overlap_count = len(set(sims_gensim_words).intersection(expected_sims_words))
         self.assertGreaterEqual(overlap_count, 2)
 
@@ -513,16 +511,16 @@ class TestFastTextModel(unittest.TestCase):
             sims_gensim = model_gensim.wv.most_similar('night', topn=10)
             sims_gensim_words = [word for (word, distance) in sims_gensim]  # get similar words
             expected_sims_words = [
-                u'night,',
-                u'night.',
-                u'eight',
-                u'nine',
-                u'overnight',
-                u'crew',
-                u'overnight.',
-                u'manslaughter',
-                u'north',
-                u'flight']
+                'night,',
+                'night.',
+                'eight',
+                'nine',
+                'overnight',
+                'crew',
+                'overnight.',
+                'manslaughter',
+                'north',
+                'flight']
             overlap_count = len(set(sims_gensim_words).intersection(expected_sims_words))
             self.assertGreaterEqual(overlap_count, 2)
 
@@ -542,16 +540,16 @@ class TestFastTextModel(unittest.TestCase):
         sims_gensim = model_gensim.wv.most_similar('night', topn=10)
         sims_gensim_words = [word for (word, distance) in sims_gensim]  # get similar words
         expected_sims_words = [
-            u'night.',
-            u'night,',
-            u'eight',
-            u'fight',
-            u'month',
-            u'hearings',
-            u'Washington',
-            u'remains',
-            u'overnight',
-            u'running']
+            'night.',
+            'night,',
+            'eight',
+            'fight',
+            'month',
+            'hearings',
+            'Washington',
+            'remains',
+            'overnight',
+            'running']
         overlap_count = len(set(sims_gensim_words).intersection(expected_sims_words))
         self.assertGreaterEqual(overlap_count, 2)
 
@@ -575,16 +573,16 @@ class TestFastTextModel(unittest.TestCase):
             sims_gensim = model_gensim.wv.most_similar('night', topn=10)
             sims_gensim_words = [word for (word, distance) in sims_gensim]  # get similar words
             expected_sims_words = [
-                u'night.',
-                u'night,',
-                u'eight',
-                u'fight',
-                u'month',
-                u'hearings',
-                u'Washington',
-                u'remains',
-                u'overnight',
-                u'running']
+                'night.',
+                'night,',
+                'eight',
+                'fight',
+                'month',
+                'hearings',
+                'Washington',
+                'remains',
+                'overnight',
+                'running']
             overlap_count = len(set(sims_gensim_words).intersection(expected_sims_words))
             self.assertGreaterEqual(overlap_count, 2)
 
@@ -604,16 +602,16 @@ class TestFastTextModel(unittest.TestCase):
         sims_gensim = model_gensim.wv.most_similar('night', topn=10)
         sims_gensim_words = [word for (word, distance) in sims_gensim]  # get similar words
         expected_sims_words = [
-            u'night.',
-            u'night,',
-            u'eight',
-            u'overnight',
-            u'overnight.',
-            u'month',
-            u'land',
-            u'firm',
-            u'singles',
-            u'death']
+            'night.',
+            'night,',
+            'eight',
+            'overnight',
+            'overnight.',
+            'month',
+            'land',
+            'firm',
+            'singles',
+            'death']
         overlap_count = len(set(sims_gensim_words).intersection(expected_sims_words))
         self.assertGreaterEqual(overlap_count, 2)
 
@@ -637,16 +635,16 @@ class TestFastTextModel(unittest.TestCase):
             sims_gensim = model_gensim.wv.most_similar('night', topn=10)
             sims_gensim_words = [word for (word, distance) in sims_gensim]  # get similar words
             expected_sims_words = [
-                u'night.',
-                u'night,',
-                u'eight',
-                u'overnight',
-                u'overnight.',
-                u'month',
-                u'land',
-                u'firm',
-                u'singles',
-                u'death']
+                'night.',
+                'night,',
+                'eight',
+                'overnight',
+                'overnight.',
+                'month',
+                'land',
+                'firm',
+                'singles',
+                'death']
             overlap_count = len(set(sims_gensim_words).intersection(expected_sims_words))
             self.assertGreaterEqual(overlap_count, 2)
 
@@ -895,7 +893,7 @@ def load_native():
 def load_vec(fin):
     fin.readline()  # array shape
     for line in fin:
-        columns = line.strip().split(u' ')
+        columns = line.strip().split(' ')
         word = columns.pop(0)
         vector = [float(c) for c in columns]
         yield word, np.array(vector, dtype=np.float32)
@@ -976,13 +974,13 @@ class NativeTrainingContinuationTest(unittest.TestCase):
         # $ echo "quick brown fox jumps over lazy dog" | ./fasttext print-word-vectors gensim/test/test_data/toy-model.bin  # noqa: E501
         #
         expected = {
-            u"quick": [0.023393, 0.11499, 0.11684, -0.13349, 0.022543],
-            u"brown": [0.015288, 0.050404, -0.041395, -0.090371, 0.06441],
-            u"fox": [0.061692, 0.082914, 0.020081, -0.039159, 0.03296],
-            u"jumps": [0.070107, 0.081465, 0.051763, 0.012084, 0.0050402],
-            u"over": [0.055023, 0.03465, 0.01648, -0.11129, 0.094555],
-            u"lazy": [-0.022103, -0.020126, -0.033612, -0.049473, 0.0054174],
-            u"dog": [0.084983, 0.09216, 0.020204, -0.13616, 0.01118],
+            "quick": [0.023393, 0.11499, 0.11684, -0.13349, 0.022543],
+            "brown": [0.015288, 0.050404, -0.041395, -0.090371, 0.06441],
+            "fox": [0.061692, 0.082914, 0.020081, -0.039159, 0.03296],
+            "jumps": [0.070107, 0.081465, 0.051763, 0.012084, 0.0050402],
+            "over": [0.055023, 0.03465, 0.01648, -0.11129, 0.094555],
+            "lazy": [-0.022103, -0.020126, -0.033612, -0.049473, 0.0054174],
+            "dog": [0.084983, 0.09216, 0.020204, -0.13616, 0.01118],
         }
         self.oov_expected = {
             word: np.array(arr, dtype=np.float32)
@@ -1188,27 +1186,27 @@ class HashTest(unittest.TestCase):
             self.expected = dict(load_vec(fin))
 
     def test_ascii(self):
-        word = u'landlady'
+        word = 'landlady'
         expected = self.expected[word]
         actual = self.model.wv[word]
         self.assertTrue(np.allclose(expected, actual, atol=1e-5))
 
     def test_unicode(self):
-        word = u'хозяйка'
+        word = 'хозяйка'
         expected = self.expected[word]
         actual = self.model.wv[word]
         self.assertTrue(np.allclose(expected, actual, atol=1e-5))
 
     def test_out_of_vocab(self):
-        longword = u'rechtsschutzversicherungsgesellschaften'  # many ngrams
+        longword = 'rechtsschutzversicherungsgesellschaften'  # many ngrams
         expected = {
-            u'steamtrain': np.array([0.031988, 0.022966, 0.059483, 0.094547, 0.062693]),
-            u'паровоз': np.array([-0.0033987, 0.056236, 0.036073, 0.094008, 0.00085222]),
+            'steamtrain': np.array([0.031988, 0.022966, 0.059483, 0.094547, 0.062693]),
+            'паровоз': np.array([-0.0033987, 0.056236, 0.036073, 0.094008, 0.00085222]),
             longword: np.array([-0.012889, 0.029756, 0.018020, 0.099077, 0.041939]),
         }
         actual = {w: self.model.wv[w] for w in expected}
-        self.assertTrue(np.allclose(expected[u'steamtrain'], actual[u'steamtrain'], atol=1e-5))
-        self.assertTrue(np.allclose(expected[u'паровоз'], actual[u'паровоз'], atol=1e-5))
+        self.assertTrue(np.allclose(expected['steamtrain'], actual['steamtrain'], atol=1e-5))
+        self.assertTrue(np.allclose(expected['паровоз'], actual['паровоз'], atol=1e-5))
         self.assertTrue(np.allclose(expected[longword], actual[longword], atol=1e-5))
 
 
@@ -1279,8 +1277,8 @@ class UnicodeVocabTest(unittest.TestCase):
         raw_vocab, vocab_size, nlabels, ntokens = gensim.models._fasttext_bin._load_vocab(buf, False)
 
         expected = {
-            u'英語版ウィキペディアへの投稿はいつでも\\xe6': 1,
-            u'административно-территориальн\\xd1': 2,
+            '英語版ウィキペディアへの投稿はいつでも\\xe6': 1,
+            'административно-территориальн\\xd1': 2,
         }
 
         self.assertEqual(expected, dict(raw_vocab))

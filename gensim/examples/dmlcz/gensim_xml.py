@@ -97,7 +97,7 @@ if __name__ == '__main__':
     method = sys.argv[2].strip().lower()
 
     logging.info("loading corpus mappings")
-    config = dmlcorpus.DmlConfig('%s_%s' % (gensim_build.PREFIX, language),
+    config = dmlcorpus.DmlConfig('{}_{}'.format(gensim_build.PREFIX, language),
                                  resultDir=gensim_build.RESULT_DIR, acceptLangs=[language])
 
     logging.info("loading word id mapping from %s", config.resultFile('wordids.txt'))

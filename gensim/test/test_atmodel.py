@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2016 Radim Rehurek <radimrehurek@seznam.cz>
 # Copyright (C) 2016 Olavur Mortensen <olavurmortensen@gmail.com>
@@ -413,7 +412,7 @@ class TestAuthorTopicModel(unittest.TestCase, basetmtests.TestBaseTopicModel):
             self.assertTrue(isinstance(score, float))
 
             for v, k in topic:
-                self.assertTrue(isinstance(k, six.string_types))
+                self.assertTrue(isinstance(k, str))
                 self.assertTrue(isinstance(v, float))
 
     def testGetTopicTerms(self):

@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
 """Math helper functions."""
 
-from __future__ import with_statement
 
 
 from itertools import chain
@@ -25,7 +23,6 @@ from scipy.linalg.special_matrices import triu
 from scipy.special import psi  # gamma function utils
 
 from six import iteritems, itervalues
-from six.moves import zip, range
 
 
 logger = logging.getLogger(__name__)
@@ -341,7 +338,7 @@ def scipy2sparse(vec, eps=1e-9):
     return [(int(pos), float(val)) for pos, val in zip(vec.indices, vec.data) if np.abs(val) > eps]
 
 
-class Scipy2Corpus(object):
+class Scipy2Corpus:
     """Convert a sequence of dense/sparse vectors into a streamed Gensim corpus object.
 
     See Also
@@ -400,7 +397,7 @@ def sparse2full(doc, length):
 
     doc = dict(doc)
     # overwrite some of the zeroes with explicit values
-    result[list(doc)] = list(itervalues(doc))
+    result[list(doc)] = list(doc.values())
     return result
 
 
@@ -513,7 +510,7 @@ def corpus2dense(corpus, num_terms, num_docs=None, dtype=np.float32):
     return result.astype(dtype)
 
 
-class Dense2Corpus(object):
+class Dense2Corpus:
     """Treat dense numpy array as a streamed Gensim corpus in the bag-of-words format.
 
     Notes
@@ -560,7 +557,7 @@ class Dense2Corpus(object):
         return len(self.dense)
 
 
-class Sparse2Corpus(object):
+class Sparse2Corpus:
     """Convert a matrix in scipy.sparse format into a streaming Gensim corpus.
 
     See Also
@@ -717,7 +714,7 @@ def unitvec(vec, norm='l2', return_norm=False):
     """
     supported_norms = ('l1', 'l2', 'unique')
     if norm not in supported_norms:
-        raise ValueError("'%s' is not a supported norm. Currently supported norms are %s." % (norm, supported_norms))
+        raise ValueError("'{}' is not a supported norm. Currently supported norms are {}.".format(norm, supported_norms))
 
     if scipy.sparse.issparse(vec):
         vec = vec.tocsr()
@@ -809,12 +806,12 @@ def cossim(vec1, vec2):
     vec1, vec2 = dict(vec1), dict(vec2)
     if not vec1 or not vec2:
         return 0.0
-    vec1len = 1.0 * math.sqrt(sum(val * val for val in itervalues(vec1)))
-    vec2len = 1.0 * math.sqrt(sum(val * val for val in itervalues(vec2)))
+    vec1len = 1.0 * math.sqrt(sum(val * val for val in vec1.values()))
+    vec2len = 1.0 * math.sqrt(sum(val * val for val in vec2.values()))
     assert vec1len > 0.0 and vec2len > 0.0, "sparse documents must not contain any explicit zero entries"
     if len(vec2) < len(vec1):
         vec1, vec2 = vec2, vec1  # swap references so that we iterate over the shorter vector
-    result = sum(value * vec2.get(index, 0.0) for index, value in iteritems(vec1))
+    result = sum(value * vec2.get(index, 0.0) for index, value in vec1.items())
     result /= vec1len * vec2len  # rescale by vector lengths
     return result
 
@@ -886,8 +883,8 @@ def softcossim(vec1, vec2, similarity_matrix):
 
     assert \
         vec1len > 0.0 and vec2len > 0.0, \
-        u"sparse documents must not contain any explicit zero entries and the similarity matrix S " \
-        u"must satisfy x^T * S * x > 0 for any nonzero bag-of-words vector x."
+        "sparse documents must not contain any explicit zero entries and the similarity matrix S " \
+        "must satisfy x^T * S * x > 0 for any nonzero bag-of-words vector x."
 
     result = vec1.T.dot(dense_matrix).dot(vec2)[0, 0]
     result /= math.sqrt(vec1len) * math.sqrt(vec2len)  # rescale by vector lengths
@@ -1059,7 +1056,7 @@ def jaccard(vec1, vec2):
         union = sum(weight for id_, weight in vec1) + sum(weight for id_, weight in vec2)
         vec1, vec2 = dict(vec1), dict(vec2)
         intersection = 0.0
-        for feature_id, feature_weight in iteritems(vec1):
+        for feature_id, feature_weight in vec1.items():
             intersection += min(feature_weight, vec2.get(feature_id, 0.0))
         return 1 - float(intersection) / float(union)
     else:
@@ -1212,7 +1209,7 @@ def qr_destroy(la):
     return q, r
 
 
-class MmWriter(object):
+class MmWriter:
     """Store a corpus in `Matrix Market format <https://math.nist.gov/MatrixMarket/formats.html>`_,
     using :class:`~gensim.corpora.mmcorpus.MmCorpus`.
 
@@ -1270,7 +1267,7 @@ class MmWriter(object):
                 "saving sparse %sx%s matrix with %i non-zero entries to %s",
                 num_docs, num_terms, num_nnz, self.fname
             )
-            self.fout.write(utils.to_utf8('%s %s %s\n' % (num_docs, num_terms, num_nnz)))
+            self.fout.write(utils.to_utf8('{} {} {}\n'.format(num_docs, num_terms, num_nnz)))
         self.last_docno = -1
         self.headers_written = True
 

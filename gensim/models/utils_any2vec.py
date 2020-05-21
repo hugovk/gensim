@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Author: Shiva Manne <s.manne@rare-technologies.com>
 # Copyright (C) 2019 RaRe Technologies s.r.o.
@@ -31,7 +30,6 @@ import gensim.models.keyedvectors
 
 from numpy import zeros, dtype, float32 as REAL, ascontiguousarray, frombuffer
 
-from six.moves import range
 from six import iteritems, PY2
 
 logger = logging.getLogger(__name__)
@@ -131,20 +129,20 @@ def _save_word2vec_format(fname, vocab, vectors, fvocab=None, binary=False, tota
     if fvocab is not None:
         logger.info("storing vocabulary in %s", fvocab)
         with utils.open(fvocab, 'wb') as vout:
-            for word, vocab_ in sorted(iteritems(vocab), key=lambda item: -item[1].count):
-                vout.write(utils.to_utf8("%s %s\n" % (word, vocab_.count)))
+            for word, vocab_ in sorted(vocab.items(), key=lambda item: -item[1].count):
+                vout.write(utils.to_utf8("{} {}\n".format(word, vocab_.count)))
     logger.info("storing %sx%s projection weights into %s", total_vec, vector_size, fname)
     assert (len(vocab), vector_size) == vectors.shape
     with utils.open(fname, 'wb') as fout:
-        fout.write(utils.to_utf8("%s %s\n" % (total_vec, vector_size)))
+        fout.write(utils.to_utf8("{} {}\n".format(total_vec, vector_size)))
         # store in sorted order: most frequent words at the top
-        for word, vocab_ in sorted(iteritems(vocab), key=lambda item: -item[1].count):
+        for word, vocab_ in sorted(vocab.items(), key=lambda item: -item[1].count):
             row = vectors[vocab_.index]
             if binary:
                 row = row.astype(REAL)
                 fout.write(utils.to_utf8(word) + b" " + row.tostring())
             else:
-                fout.write(utils.to_utf8("%s %s\n" % (word, ' '.join(repr(val) for val in row))))
+                fout.write(utils.to_utf8("{} {}\n".format(word, ' '.join(repr(val) for val in row))))
 
 
 # Functions for internal use by _load_word2vec_format function

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2016 Radim Rehurek <radimrehurek@seznam.cz>
 # Copyright (C) 2016 Manas Ranjan Kar <manasrkar91@gmail.com>
@@ -104,7 +103,7 @@ def glove2word2vec(glove_input_file, word2vec_output_file):
     num_lines, num_dims = get_glove_info(glove_input_file)
     logger.info("converting %i vectors from %s to %s", num_lines, glove_input_file, word2vec_output_file)
     with utils.open(word2vec_output_file, 'wb') as fout:
-        fout.write("{0} {1}\n".format(num_lines, num_dims).encode('utf-8'))
+        fout.write("{} {}\n".format(num_lines, num_dims).encode('utf-8'))
         with utils.open(glove_input_file, 'rb') as fin:
             for line in fin:
                 fout.write(line)

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -67,7 +66,6 @@ import scipy.linalg
 import scipy.sparse
 from scipy.sparse import sparsetools
 from six import iterkeys
-from six.moves import range
 
 from gensim import interfaces, matutils, utils
 from gensim.models import basemodel
@@ -256,7 +254,7 @@ class Projection(utils.SaveLoad):
             return
         if self.m != other.m:
             raise ValueError(
-                "vector space mismatch: update is using %s features, expected %s" % (other.m, self.m)
+                "vector space mismatch: update is using {} features, expected {}".format(other.m, self.m)
             )
         logger.info("merging projections: %s + %s", str(self.u.shape), str(other.u.shape))
         m, n1, n2 = self.u.shape[0], self.u.shape[1], other.u.shape[1]
@@ -541,7 +539,7 @@ class LsiModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
             A human readable string of the current objects parameters.
 
         """
-        return "LsiModel(num_terms=%s, num_topics=%s, decay=%s, chunksize=%s)" % (
+        return "LsiModel(num_terms={}, num_topics={}, decay={}, chunksize={})".format(
             self.num_terms, self.num_topics, self.decay, self.chunksize
         )
 
@@ -756,7 +754,7 @@ class LsiModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
 
         if self.projection is not None:
             self.projection.save(utils.smart_extension(fname, '.projection'), *args, **kwargs)
-        super(LsiModel, self).save(fname, *args, ignore=['projection', 'dispatcher'], **kwargs)
+        super().save(fname, *args, ignore=['projection', 'dispatcher'], **kwargs)
 
     @classmethod
     def load(cls, fname, *args, **kwargs):
@@ -791,10 +789,10 @@ class LsiModel(interfaces.TransformationABC, basemodel.BaseTopicModel):
 
         """
         kwargs['mmap'] = kwargs.get('mmap', None)
-        result = super(LsiModel, cls).load(fname, *args, **kwargs)
+        result = super().load(fname, *args, **kwargs)
         projection_fname = utils.smart_extension(fname, '.projection')
         try:
-            result.projection = super(LsiModel, cls).load(projection_fname, *args, **kwargs)
+            result.projection = super().load(projection_fname, *args, **kwargs)
         except Exception as e:
             logging.warning("failed to load projection from %s: %s", projection_fname, e)
         return result
@@ -833,7 +831,7 @@ def print_debug(id2token, u, s, topics, num_words=10, num_neg=None):
             result.setdefault(topic, []).append((udiff[topic], uvecno))
 
     logger.debug("printing %i+%i salient words", num_words, num_neg)
-    for topic in sorted(iterkeys(result)):
+    for topic in sorted(result.keys()):
         weights = sorted(result[topic], key=lambda x: -abs(x[0]))
         _, most = weights[0]
         if u[most, topic] < 0.0:  # the most significant word has a negative sign => flip sign of u[most]
@@ -845,13 +843,13 @@ def print_debug(id2token, u, s, topics, num_words=10, num_neg=None):
         pos, neg = [], []
         for weight, uvecno in weights:
             if normalize * u[uvecno, topic] > 0.0001:
-                pos.append('%s(%.3f)' % (id2token[uvecno], u[uvecno, topic]))
+                pos.append('{}({:.3f})'.format(id2token[uvecno], u[uvecno, topic]))
                 if len(pos) >= num_words:
                     break
 
         for weight, uvecno in weights:
             if normalize * u[uvecno, topic] < -0.0001:
-                neg.append('%s(%.3f)' % (id2token[uvecno], u[uvecno, topic]))
+                neg.append('{}({:.3f})'.format(id2token[uvecno], u[uvecno, topic]))
                 if len(neg) >= num_neg:
                     break
 

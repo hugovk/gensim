@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -8,7 +7,6 @@
 Automated tests for checking corpus I/O formats (the corpora package).
 """
 
-from __future__ import unicode_literals
 
 import codecs
 import itertools
@@ -30,7 +28,7 @@ from gensim.test.utils import datapath, get_tmpfile, common_corpus
 AZURE = bool(os.environ.get('PIPELINE_WORKSPACE'))
 
 
-class DummyTransformer(object):
+class DummyTransformer:
     def __getitem__(self, bow):
         if len(next(iter(bow))) == 2:
             # single bag of words
@@ -50,7 +48,7 @@ class CorpusTestCase(unittest.TestCase):
 
     def run(self, result=None):
         if type(self) is not CorpusTestCase:
-            super(CorpusTestCase, self).run(result)
+            super().run(result)
 
     def tearDown(self):
         # remove all temporary test files
@@ -160,7 +158,7 @@ class CorpusTestCase(unittest.TestCase):
         corpus = self.corpus_class(fname)
         if hasattr(corpus, 'id2word'):
             firstdoc = next(iter(corpus))
-            testdoc = set((to_unicode(corpus.id2word[x]), y) for x, y in firstdoc)
+            testdoc = {(to_unicode(corpus.id2word[x]), y) for x, y in firstdoc}
 
             self.assertEqual(testdoc, {('computer', 1), ('human', 1), ('interface', 1)})
 
@@ -169,7 +167,7 @@ class CorpusTestCase(unittest.TestCase):
             corpus.id2word = d
 
             firstdoc2 = next(iter(corpus))
-            testdoc2 = set((to_unicode(corpus.id2word[x]), y) for x, y in firstdoc2)
+            testdoc2 = {(to_unicode(corpus.id2word[x]), y) for x, y in firstdoc2}
             self.assertEqual(testdoc2, {('computer', 1), ('human', 1), ('interface', 1)})
 
     @unittest.skipIf(AZURE, 'see <https://github.com/RaRe-Technologies/gensim/pull/2836>')
@@ -494,7 +492,7 @@ class TestMalletCorpus(TestLowCorpus):
 
     def test_line2doc(self):
         # case with metadata=False (by default)
-        super(TestMalletCorpus, self).test_line2doc()
+        super().test_line2doc()
 
         # case with metadata=True
         fname = datapath('testcorpus.' + self.file_extension.lstrip('.'))
@@ -681,8 +679,8 @@ class TestWikiCorpus(TestTextCorpus):
         corpus = self.corpus_class(self.enwiki, processes=1)
 
         texts = corpus.get_texts()
-        self.assertTrue(u'anarchism' in next(texts))
-        self.assertTrue(u'autism' in next(texts))
+        self.assertTrue('anarchism' in next(texts))
+        self.assertTrue('autism' in next(texts))
 
     def test_unicode_element(self):
         """
@@ -692,7 +690,7 @@ class TestWikiCorpus(TestTextCorpus):
         bgwiki = datapath('bgwiki-latest-pages-articles-shortened.xml.bz2')
         corpus = self.corpus_class(bgwiki)
         texts = corpus.get_texts()
-        self.assertTrue(u'папа' in next(texts))
+        self.assertTrue('папа' in next(texts))
 
     def test_custom_tokenizer(self):
         """
@@ -702,10 +700,10 @@ class TestWikiCorpus(TestTextCorpus):
                         token_max_len=16, token_min_len=1, lower=False)
         row = wc.get_texts()
         list_tokens = next(row)
-        self.assertTrue(u'Anarchism' in list_tokens)
-        self.assertTrue(u'collectivization' in list_tokens)
-        self.assertTrue(u'a' in list_tokens)
-        self.assertTrue(u'i.e.' in list_tokens)
+        self.assertTrue('Anarchism' in list_tokens)
+        self.assertTrue('collectivization' in list_tokens)
+        self.assertTrue('a' in list_tokens)
+        self.assertTrue('i.e.' in list_tokens)
 
     def test_lower_case_set_true(self):
         """
@@ -714,8 +712,8 @@ class TestWikiCorpus(TestTextCorpus):
         corpus = self.corpus_class(self.enwiki, processes=1, lower=True, lemmatize=False)
         row = corpus.get_texts()
         list_tokens = next(row)
-        self.assertTrue(u'Anarchism' not in list_tokens)
-        self.assertTrue(u'anarchism' in list_tokens)
+        self.assertTrue('Anarchism' not in list_tokens)
+        self.assertTrue('anarchism' in list_tokens)
 
     def test_lower_case_set_false(self):
         """
@@ -724,8 +722,8 @@ class TestWikiCorpus(TestTextCorpus):
         corpus = self.corpus_class(self.enwiki, processes=1, lower=False, lemmatize=False)
         row = corpus.get_texts()
         list_tokens = next(row)
-        self.assertTrue(u'Anarchism' in list_tokens)
-        self.assertTrue(u'anarchism' in list_tokens)
+        self.assertTrue('Anarchism' in list_tokens)
+        self.assertTrue('anarchism' in list_tokens)
 
     def test_min_token_len_not_set(self):
         """
@@ -733,14 +731,14 @@ class TestWikiCorpus(TestTextCorpus):
         Default token_min_len=2
         """
         corpus = self.corpus_class(self.enwiki, processes=1, lemmatize=False)
-        self.assertTrue(u'a' not in next(corpus.get_texts()))
+        self.assertTrue('a' not in next(corpus.get_texts()))
 
     def test_min_token_len_set(self):
         """
         Set the parameter token_min_len to 1 and check that 'a' as a token exists
         """
         corpus = self.corpus_class(self.enwiki, processes=1, token_min_len=1, lemmatize=False)
-        self.assertTrue(u'a' in next(corpus.get_texts()))
+        self.assertTrue('a' in next(corpus.get_texts()))
 
     def test_max_token_len_not_set(self):
         """
@@ -748,14 +746,14 @@ class TestWikiCorpus(TestTextCorpus):
         Default token_max_len=15
         """
         corpus = self.corpus_class(self.enwiki, processes=1, lemmatize=False)
-        self.assertTrue(u'collectivization' not in next(corpus.get_texts()))
+        self.assertTrue('collectivization' not in next(corpus.get_texts()))
 
     def test_max_token_len_set(self):
         """
         Set the parameter token_max_len to 16 and check that 'collectivisation' as a token exists
         """
         corpus = self.corpus_class(self.enwiki, processes=1, token_max_len=16, lemmatize=False)
-        self.assertTrue(u'collectivization' in next(corpus.get_texts()))
+        self.assertTrue('collectivization' in next(corpus.get_texts()))
 
     def test_removed_table_markup(self):
         """

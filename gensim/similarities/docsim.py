@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -78,7 +77,6 @@ import scipy.sparse
 
 from gensim import interfaces, utils, matutils
 from .termsim import SparseTermSimilarityMatrix
-from six.moves import map, range, zip
 
 
 logger = logging.getLogger(__name__)
@@ -430,9 +428,9 @@ class Similarity(interfaces.SimilarityABC):
 
         """
         if self.output_prefix.endswith('.'):
-            return "%s%s" % (self.output_prefix, shardid)
+            return "{}{}".format(self.output_prefix, shardid)
         else:
-            return "%s.%s" % (self.output_prefix, shardid)
+            return "{}.{}".format(self.output_prefix, shardid)
 
     def close_shard(self):
         """Force the latest shard to close (be converted to a matrix and stored to disk).
@@ -615,7 +613,7 @@ class Similarity(interfaces.SimilarityABC):
             if docpos < pos:
                 break
         if not self.shards or docpos < 0 or docpos >= pos:
-            raise ValueError("invalid document position: %s (must be 0 <= x < %s)" % (docpos, len(self)))
+            raise ValueError("invalid document position: {} (must be 0 <= x < {})".format(docpos, len(self)))
         result = shard.get_document_id(docpos - pos + len(shard))
         return result
 
@@ -666,8 +664,7 @@ class Similarity(interfaces.SimilarityABC):
 
         for chunk in self.iter_chunks():
             if chunk.shape[0] > 1:
-                for sim in self[chunk]:
-                    yield sim
+                yield from self[chunk]
             else:
                 yield self[chunk]
 
@@ -748,7 +745,7 @@ class Similarity(interfaces.SimilarityABC):
         self.close_shard()
         if fname is None:
             fname = self.output_prefix
-        super(Similarity, self).save(fname, *args, **kwargs)
+        super().save(fname, *args, **kwargs)
 
     def destroy(self):
         """Delete all files under self.output_prefix Index is not usable anymore after calling this method."""

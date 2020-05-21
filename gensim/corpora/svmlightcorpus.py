@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -8,7 +7,6 @@
 """Corpus in SVMlight format."""
 
 
-from __future__ import with_statement
 
 import logging
 
@@ -186,4 +184,4 @@ class SvmLightCorpus(IndexedCorpus):
 
         """
         pairs = ' '.join("%i:%s" % (termid + 1, termval) for termid, termval in doc)  # +1 to convert 0-base to 1-base
-        return "%s %s\n" % (label, pairs)
+        return "{} {}\n".format(label, pairs)

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -20,7 +19,7 @@ import dictionary  # for constructing word->id mappings
 logger = logging.getLogger('gensim.corpora.dmlcorpus')
 
 
-class DmlConfig(object):
+class DmlConfig:
     """
     DmlConfig contains parameters necessary for the abstraction of a 'corpus of
     articles' (see the `DmlCorpus` class).

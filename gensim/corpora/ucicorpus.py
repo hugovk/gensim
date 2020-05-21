@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2012 Jonathan Esterhazy <jonathan.esterhazy at gmail.com>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -7,7 +6,6 @@
 
 """Corpus in `UCI format <http://archive.ics.uci.edu/ml/datasets/Bag+of+Words>`_."""
 
-from __future__ import with_statement
 
 import logging
 from collections import defaultdict
@@ -17,7 +15,6 @@ from gensim.corpora import Dictionary
 from gensim.corpora import IndexedCorpus
 from gensim.matutils import MmReader
 from gensim.matutils import MmWriter
-from six.moves import range
 
 
 logger = logging.getLogger(__name__)
@@ -203,7 +200,7 @@ class UciCorpus(UciReader, IndexedCorpus):
             Document in BoW format.
 
         """
-        for docId, doc in super(UciCorpus, self).__iter__():
+        for docId, doc in super().__iter__():
             yield doc  # get rid of docId, return the sparse vector only
 
     def create_dictionary(self):

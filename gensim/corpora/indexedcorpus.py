@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -182,7 +181,7 @@ class IndexedCorpus(interfaces.CorpusABC):
             raise RuntimeError("Cannot call corpus[docid] without an index")
         if isinstance(docno, (slice, list, numpy.ndarray)):
             return utils.SlicedCorpus(self, docno)
-        elif isinstance(docno, six.integer_types + (numpy.integer,)):
+        elif isinstance(docno, (int,) + (numpy.integer,)):
             return self.docbyoffset(self.index[docno])
             # TODO: no `docbyoffset` method, should be defined in this class
         else:

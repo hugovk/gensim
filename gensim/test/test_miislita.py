@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -12,8 +11,6 @@ See http://www.miislita.com for further details.
 
 """
 
-from __future__ import division  # always use floats
-from __future__ import with_statement
 
 import logging
 import os

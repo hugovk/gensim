@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -29,8 +28,7 @@ class TestLogEntropyModel(unittest.TestCase):
     def test_generator_fail(self):
         """Test creating a model using a generator as input; should fail."""
         def get_generator(test_corpus=TestLogEntropyModel.TEST_CORPUS):
-            for test_doc in test_corpus:
-                yield test_doc
+            yield from test_corpus
         self.assertRaises(ValueError, logentropy_model.LogEntropyModel, corpus=get_generator())
 
     def test_empty_fail(self):

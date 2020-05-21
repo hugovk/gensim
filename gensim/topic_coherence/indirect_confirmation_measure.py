@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -182,7 +181,7 @@ def cosine_similarity(segmented_topics, accumulator, topics, measure='nlr',
     return topic_coherences
 
 
-class ContextVectorComputer(object):
+class ContextVectorComputer:
     """Lazily compute context vectors for topic segments.
 
     Parameters

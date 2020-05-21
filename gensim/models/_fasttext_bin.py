@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Load models from the native binary format released by Facebook.
 
 The main entry point is the :func:`~gensim.models._fasttext_bin.load` function.
@@ -277,7 +276,7 @@ def _load_matrix(fin, new_format=True):
     else:
         matrix = np.fromfile(fin, _FLOAT_DTYPE, count)
 
-    assert matrix.shape == (count,), 'expected (%r,),  got %r' % (count, matrix.shape)
+    assert matrix.shape == (count,), 'expected ({!r},),  got {!r}'.format(count, matrix.shape)
     matrix = matrix.reshape((num_vectors, dim))
     return matrix
 
@@ -293,13 +292,11 @@ def _batched_generator(fin, count, batch_size=1e6):
     """
     while count > batch_size:
         batch = _struct_unpack(fin, '@%df' % batch_size)
-        for f in batch:
-            yield f
+        yield from batch
         count -= batch_size
 
     batch = _struct_unpack(fin, '@%df' % count)
-    for f in batch:
-        yield f
+    yield from batch
 
 
 def _fromfile(fin, dtype, count):
@@ -382,7 +379,7 @@ def _backslashreplace_backport(ex):
     # https://stackoverflow.com/questions/42860186/exact-equivalent-of-b-decodeutf-8-backslashreplace-in-python-2
     #
     bstr, start, end = ex.object, ex.start, ex.end
-    text = u''.join('\\x{:02x}'.format(ord(c)) for c in bstr[start:end])
+    text = ''.join('\\x{:02x}'.format(ord(c)) for c in bstr[start:end])
     return text, end
 
 

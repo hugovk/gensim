@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -195,7 +194,7 @@ class D2VTransformer(TransformerMixin, BaseEstimator):
             )
 
         # The input as array of array
-        if isinstance(docs[0], string_types):
+        if isinstance(docs[0], str):
             docs = [docs]
         vectors = [self.gensim_model.infer_vector(doc) for doc in docs]
         return np.reshape(np.array(vectors), (len(docs), self.gensim_model.vector_size))

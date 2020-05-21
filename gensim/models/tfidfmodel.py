@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2012 Radim Rehurek <radimrehurek@seznam.cz>
 # Copyright (C) 2017 Mohit Rathore <mrmohitrathoremr@gmail.com>
@@ -155,7 +154,7 @@ def precompute_idfs(wglobal, dfs, total_docs):
     """
     # not strictly necessary and could be computed on the fly in TfidfModel__getitem__.
     # this method is here just to speed things up a little.
-    return {termid: wglobal(df, total_docs) for termid, df in iteritems(dfs)}
+    return {termid: wglobal(df, total_docs) for termid, df in dfs.items()}
 
 
 def smartirs_wlocal(tf, local_scheme):
@@ -389,7 +388,7 @@ class TfidfModel(interfaces.TransformationABC):
             self.num_docs, self.num_nnz = dictionary.num_docs, dictionary.num_nnz
             self.cfs = dictionary.cfs.copy()
             self.dfs = dictionary.dfs.copy()
-            self.term_lens = {termid: len(term) for termid, term in iteritems(dictionary)}
+            self.term_lens = {termid: len(term) for termid, term in dictionary.items()}
             self.idfs = precompute_idfs(self.wglobal, self.dfs, self.num_docs)
             if not id2word:
                 self.id2word = dictionary
@@ -415,7 +414,7 @@ class TfidfModel(interfaces.TransformationABC):
             self.pivot = 1.0 * self.num_nnz / self.num_docs
         elif n_n == "b":
             self.pivot = 1.0 * sum(
-                self.cfs[termid] * (self.term_lens[termid] + 1.0) for termid in iterkeys(dictionary)
+                self.cfs[termid] * (self.term_lens[termid] + 1.0) for termid in dictionary.keys()
             ) / self.num_docs
 
     @classmethod
@@ -424,7 +423,7 @@ class TfidfModel(interfaces.TransformationABC):
         older TfidfModel versions which did not use pivoted document normalization.
 
         """
-        model = super(TfidfModel, cls).load(*args, **kwargs)
+        model = super().load(*args, **kwargs)
         if not hasattr(model, 'pivot'):
             model.pivot = None
             logger.info('older version of %s loaded without pivot arg', cls.__name__)
@@ -440,7 +439,7 @@ class TfidfModel(interfaces.TransformationABC):
         return model
 
     def __str__(self):
-        return "TfidfModel(num_docs=%s, num_nnz=%s)" % (self.num_docs, self.num_nnz)
+        return "TfidfModel(num_docs={}, num_nnz={})".format(self.num_docs, self.num_nnz)
 
     def initialize(self, corpus):
         """Compute inverse document weights, which will be used to modify term frequencies for documents.

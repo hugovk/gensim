@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -42,7 +41,7 @@ One node has no neighbours.
 from abc import ABCMeta, abstractmethod
 
 
-class IGraph(object):
+class IGraph:
     """Represents the interface or contract that the graph for TextRank
     should implement.
     """
@@ -310,7 +309,7 @@ class Graph(IGraph):
             if u != v:
                 self.node_neighbors[v][u] = wt
         else:
-            raise ValueError("Edge (%s, %s) already in graph" % (u, v))
+            raise ValueError("Edge ({}, {}) already in graph".format(u, v))
 
     def add_node(self, node):
         """Adds given node to the graph.

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -7,7 +6,6 @@
 """
 Automated tests for checking transformation algorithms (the models package).
 """
-from __future__ import division
 
 import logging
 import unittest
@@ -30,7 +28,7 @@ except (ImportError, ValueError):
     PYEMD_EXT = False
 
 
-class LeeCorpus(object):
+class LeeCorpus:
     def __iter__(self):
         with open(datapath('lee_background.cor')) as f:
             for line in f:
@@ -361,8 +359,6 @@ class TestWord2VecModel(unittest.TestCase):
 
         if sys.version_info[:2] == (3, 4):
             model_file_suffix = '_py3_4'
-        elif sys.version_info < (3,):
-            model_file_suffix = '_py2'
         else:
             model_file_suffix = '_py3'
 
@@ -1122,7 +1118,7 @@ class TestWord2VecSentenceIterators(unittest.TestCase):
 if not hasattr(TestWord2VecModel, 'assertLess'):
     # workaround for python 2.6
     def assertLess(self, a, b, msg=None):
-        self.assertTrue(a < b, msg="%s is not less than %s" % (a, b))
+        self.assertTrue(a < b, msg="{} is not less than {}".format(a, b))
 
     setattr(TestWord2VecModel, 'assertLess', assertLess)
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
 
@@ -40,7 +39,6 @@ Data:
 import logging
 import math
 from six import iteritems
-from six.moves import range
 from functools import partial
 from multiprocessing import Pool
 from ..utils import effective_n_jobs
@@ -52,7 +50,7 @@ EPSILON = 0.25
 logger = logging.getLogger(__name__)
 
 
-class BM25(object):
+class BM25:
     """Implementation of Best Matching 25 ranking function.
 
     Attributes
@@ -122,7 +120,7 @@ class BM25(object):
                 frequencies[word] += 1
             self.doc_freqs.append(frequencies)
 
-            for word, freq in iteritems(frequencies):
+            for word, freq in frequencies.items():
                 if word not in nd:
                     nd[word] = 0
                 nd[word] += 1
@@ -133,7 +131,7 @@ class BM25(object):
         # collect words with negative idf to set them a special epsilon value.
         # idf can be negative if word is contained in more than half of documents
         negative_idfs = []
-        for word, freq in iteritems(nd):
+        for word, freq in nd.items():
             idf = math.log(self.corpus_size - freq + 0.5) - math.log(freq + 0.5)
             self.idf[word] = idf
             idf_sum += idf
@@ -317,8 +315,7 @@ def iter_bm25_bow(corpus, n_jobs=1, k1=PARAM_K1, b=PARAM_B, epsilon=EPSILON):
     get_score = partial(_get_scores_bow, bm25)
     pool = Pool(n_processes)
 
-    for bow in pool.imap(get_score, corpus):
-        yield bow
+    yield from pool.imap(get_score, corpus)
     pool.close()
     pool.join()
 

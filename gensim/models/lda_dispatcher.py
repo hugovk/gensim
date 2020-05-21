@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Radim Rehurek <radimrehurek@seznam.cz>
 # Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
@@ -56,7 +55,6 @@ Command line arguments
 
 """
 
-from __future__ import with_statement
 import argparse
 import os
 import sys
@@ -91,7 +89,7 @@ HUGE_TIMEOUT = 365 * 24 * 60 * 60  # one year
 LDA_DISPATCHER_PREFIX = 'gensim.lda_dispatcher'
 
 
-class Dispatcher(object):
+class Dispatcher:
     """Dispatcher object that communicates and coordinates individual workers.
 
     Warnings
@@ -143,7 +141,7 @@ class Dispatcher(object):
         self.workers = {}
         with utils.getNS(**self.ns_conf) as ns:
             self.callback = Pyro4.Proxy(ns.list(prefix=LDA_DISPATCHER_PREFIX)[LDA_DISPATCHER_PREFIX])
-            for name, uri in iteritems(ns.list(prefix=LDA_WORKER_PREFIX)):
+            for name, uri in ns.list(prefix=LDA_WORKER_PREFIX).items():
                 try:
                     worker = Pyro4.Proxy(uri)
                     workerid = len(self.workers)
@@ -168,7 +166,7 @@ class Dispatcher(object):
             The pyro URIs for each worker.
 
         """
-        return [worker._pyroUri for worker in itervalues(self.workers)]
+        return [worker._pyroUri for worker in self.workers.values()]
 
     @Pyro4.expose
     def getjob(self, worker_id):
@@ -223,7 +221,7 @@ class Dispatcher(object):
             i += 1
             if i > count:
                 i = 0
-                for workerid, worker in iteritems(self.workers):
+                for workerid, worker in self.workers.items():
                     logger.info("checking aliveness for worker %s", workerid)
                     worker.ping()
 
@@ -246,7 +244,7 @@ class Dispatcher(object):
             State of :class:`~gensim.models.lda.LdaModel`.
 
         """
-        for workerid, worker in iteritems(self.workers):
+        for workerid, worker in self.workers.items():
             logger.info("resetting worker %s", workerid)
             worker.reset(state)
             worker.requestjob()
@@ -289,7 +287,7 @@ class Dispatcher(object):
     @Pyro4.oneway
     def exit(self):
         """Terminate all registered workers and then the dispatcher."""
-        for workerid, worker in iteritems(self.workers):
+        for workerid, worker in self.workers.items():
             logger.info("terminating worker %s", workerid)
             worker.exit()
         logger.info("terminating dispatcher")

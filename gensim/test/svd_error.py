@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011 Radim Rehurek <radimrehurek@seznam.cz>
 
@@ -18,7 +17,6 @@ the entire matrix will be used.
 Example: ./svd_error.py ~/gensim/results/wiki_en_v10k.mm.bz2 100000 10000
 """
 
-from __future__ import print_function, with_statement
 
 import logging
 import os
@@ -72,7 +70,7 @@ def print_error(name, aat, u, s, ideal_nf, ideal_n2):
     sys.stdout.flush()
 
 
-class ClippedCorpus(object):
+class ClippedCorpus:
     def __init__(self, corpus, max_docs, max_terms):
         self.corpus = corpus
         self.max_docs, self.max_terms = max_docs, max_terms
@@ -137,7 +135,7 @@ if __name__ == '__main__':
         print('*' * 40, "%i factors, ideal error norm_frobenius=%f, norm_2=%f" % (factors, ideal_fro, ideal_n2))
         print("*" * 30, end="")
         print_error("baseline", aat,
-                    np.zeros((m, factors)), np.zeros((factors)), ideal_fro, ideal_n2)
+                    np.zeros((m, factors)), np.zeros(factors), ideal_fro, ideal_n2)
         if sparsesvd:
             logging.info("computing SVDLIBC SVD for %i factors", factors)
             taken = time.time()
